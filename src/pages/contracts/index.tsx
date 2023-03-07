@@ -5,20 +5,20 @@ import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-interface ProjectProps {
-    projects: Database['public']['Tables']['Project']['Row'][],
+interface ContractsProps {
+    contracts: Database['public']['Tables']['contracts']['Row'][],
     count: number
 }
-const Project: React.FC<ProjectProps> = ({ projects, count }) => {
+const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
     const router = useRouter()
     return (
         <BaseLayout title={`Project (${count})`}>
-            <Link href="/projects/new" className='bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded'>
+            <Link href="/contracts/new" className='bg-violet-500 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded'>
                 New Project
             </Link>
-            <Table data={projects} onRowClick={
-                (row: Database['public']['Tables']['Project']['Row']) => {
-                    router.push(`/projects/${row.id}`)
+            <Table data={contracts} onRowClick={
+                (row: Database['public']['Tables']['contracts']['Row']) => {
+                    router.push(`/contracts/${row.id}`)
                 }
             } />
         </BaseLayout>
@@ -27,23 +27,22 @@ const Project: React.FC<ProjectProps> = ({ projects, count }) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const supabase = createServerSupabaseClient<Database>(context)
-    const { data: projects, error, count } = await supabase
-        .from('Project')
+    const { data: contracts, error, count } = await supabase
+        .from('contracts')
         .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
     if (error) {
         return {
             props: {
-                project: [],
+                contracts: [],
                 count: 0
             },
         }
     }
     return {
         props: {
-            projects,
+            contracts,
             count
         },
     }
 }
-export default Project
+export default Contracts

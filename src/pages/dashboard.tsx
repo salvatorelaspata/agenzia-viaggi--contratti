@@ -1,15 +1,15 @@
 import BaseLayout from "@/components/layout/BaseLayout"
 import { Database } from "@/types/supabase";
-import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs"
+import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs"
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps } from "next"
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface Props {
-    user: any
+    user: User
 }
-const Landing = () => {
+const Landing: React.FC<Props> = ({ user }) => {
     // const supabase = useSupabaseClient<Database>()
     // const [projects, setProjects] = useState<Database['public']['Tables']['Project']['Row'][]>([]);
     // const [catalogs, setCatalogs] = useState<Database['public']['Tables']['Catalog']['Row'][]>([]);
@@ -38,6 +38,10 @@ const Landing = () => {
     return (
         <BaseLayout title="">
             <div className="flex flex-col">
+
+                <pre>
+                    {JSON.stringify(user, null, 2)}
+                </pre>
                 {/* Griglia dei progetti */}
                 <div className="mb-6">
                     <h2 className="text-3xl font-bold mb-2">Progetti</h2>
@@ -95,6 +99,5 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
         }
     }
 }
-
 
 export default Landing
