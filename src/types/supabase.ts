@@ -13,10 +13,10 @@ export interface Database {
         Row: {
           arrivo: string
           contraente_id: number
-          d_carta_identita: string
-          d_passaporto: string
-          d_vaccini: number
-          d_visto: string
+          d_carta_identita: boolean
+          d_passaporto: boolean
+          d_vaccini: boolean | null
+          d_visto: boolean
           data: string
           data_arrivo: string
           data_partenza: string
@@ -33,10 +33,10 @@ export interface Database {
         Insert: {
           arrivo: string
           contraente_id: number
-          d_carta_identita: string
-          d_passaporto: string
-          d_vaccini: number
-          d_visto: string
+          d_carta_identita: boolean
+          d_passaporto: boolean
+          d_vaccini?: boolean | null
+          d_visto: boolean
           data: string
           data_arrivo: string
           data_partenza: string
@@ -53,10 +53,10 @@ export interface Database {
         Update: {
           arrivo?: string
           contraente_id?: number
-          d_carta_identita?: string
-          d_passaporto?: string
-          d_vaccini?: number
-          d_visto?: string
+          d_carta_identita?: boolean
+          d_passaporto?: boolean
+          d_vaccini?: boolean | null
+          d_visto?: boolean
           data?: string
           data_arrivo?: string
           data_partenza?: string
