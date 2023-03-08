@@ -1,41 +1,33 @@
 import { useState } from 'react';
 import {
   createStyles,
+  Header,
   Container,
-  Avatar,
-  UnstyledButton,
   Group,
-  Text,
-  Menu,
-  Tabs,
   Burger,
-  rem,
-  Transition,
   Paper,
-  List,
+  Transition,
+  rem,
+  Menu,
+  UnstyledButton,
+  Avatar,
+  Text,
+  ActionIcon,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import {
-  IconLogout,
-  IconHeart,
-  IconStar,
-  IconMessage,
-  IconSettings,
-  IconPlayerPause,
-  IconTrash,
-  IconSwitchHorizontal,
-  IconChevronDown,
-} from '@tabler/icons-react';
+import { IconChevronDown, IconHeart, IconLogout, IconMessage, IconMoonStars, IconPlayerPause, IconSettings, IconStar, IconSun, IconSwitchHorizontal, IconTrash } from '@tabler/icons-react';
 import { User } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
+
 const HEADER_HEIGHT = rem(60);
+
 const useStyles = createStyles((theme) => ({
-  header: {
-    paddingTop: theme.spacing.sm,
-    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-    borderBottom: `${rem(1)} solid ${theme.colorScheme === 'dark' ? 'transparent' : theme.colors.gray[2]
-      }`,
-    marginBottom: rem(2),
+  root: {
+    position: 'relative',
+    zIndex: 1,
   },
+
   dropdown: {
     position: 'absolute',
     top: HEADER_HEIGHT,
@@ -52,9 +44,19 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
-  mainSection: {
-    paddingBottom: theme.spacing.sm,
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: '100%',
   },
+
+  links: {
+    [theme.fn.smallerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
 
   user: {
     color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
@@ -71,38 +73,13 @@ const useStyles = createStyles((theme) => ({
     },
   },
 
-  burger: {
-    [theme.fn.largerThan('xs')]: {
-      display: 'none',
-    },
-  },
-
   userActive: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
   },
 
-  tabs: {
-    [theme.fn.smallerThan('sm')]: {
+  burger: {
+    [theme.fn.largerThan('sm')]: {
       display: 'none',
-    },
-  },
-
-  tabsList: {
-    borderBottom: '0 !important',
-  },
-
-  tab: {
-    fontWeight: 500,
-    height: rem(38),
-    backgroundColor: 'transparent',
-
-    '&:hover': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[1],
-    },
-
-    '&[data-active]': {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-      borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[2],
     },
   },
 
@@ -134,36 +111,45 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-interface HeaderTabsProps {
+interface HeaderResponsiveProps {
+  links: { url: string; name: string }[];
   user: User
-  tabs: string[];
 }
 
-export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
-  const { classes, theme, cx } = useStyles();
-  const [opened, { toggle }] = useDisclosure(false);
+export function HeaderResponsive({ links, user }: HeaderResponsiveProps) {
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const [active, setActive] = useState(links[0].url);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
-  const [active, setActive] = useState(tabs[0]);
+  const { classes, cx, theme } = useStyles();
+  const router = useRouter();
 
-  const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab} key={tab} onClick={(event) => {
-      event.preventDefault();
-      setActive(tab);
-      close();
-    }}>
-      {tab}
-    </Tabs.Tab>
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+
+  const items = links.map((link) => (
+    <a
+      key={link.name}
+      href={link.url}
+      className={cx(classes.link, { [classes.linkActive]: active === link.url })}
+      onClick={(event) => {
+        event.preventDefault();
+        router.push(link.url)
+        setActive(link.url);
+        close();
+      }}
+    >
+      {link.name}
+    </a>
   ));
 
-
   return (
-    <div className={classes.header}>
-      <Container className={classes.mainSection}>
-        <Group position="apart">
-          LOGO
-
-          <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
-
+    <Header height={HEADER_HEIGHT} mb={10} className={classes.root}>
+      <Container className={classes.header}>
+        Logo
+        <Group spacing={5} className={classes.links}>
+          {items}
+        </Group>
+        <Group spacing={5}>
           <Menu
             width={260}
             position="bottom-end"
@@ -177,9 +163,9 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
                 className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
               >
                 <Group spacing={7}>
-                  <Avatar src={user.user_metadata?.avatar_url} alt={user.user_metadata?.full_name} radius="xl" size={20} />
+                  <Avatar src={user.user_metadata?.avatar_url} alt={user.user_metadata?.name} radius="xl" size={20} />
                   <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                    {user.user_metadata?.name}
+                    {user.user_metadata?.full_name}
                   </Text>
                   <IconChevronDown size={rem(12)} stroke={1.5} />
                 </Group>
@@ -189,70 +175,53 @@ export function HeaderTabs({ user, tabs }: HeaderTabsProps) {
               <Menu.Item
                 icon={<IconHeart size="0.9rem" color={theme.colors.red[6]} stroke={1.5} />}
               >
-                Contratti terminati
+                Contratti in corso
               </Menu.Item>
               <Menu.Item
                 icon={<IconStar size="0.9rem" color={theme.colors.yellow[6]} stroke={1.5} />}
               >
-                Contratti in corso
+                Contratti terminati
               </Menu.Item>
               <Menu.Item
                 icon={<IconMessage size="0.9rem" color={theme.colors.blue[6]} stroke={1.5} />}
               >
-                Contratti in attesa
+                Contratti in scadenza
               </Menu.Item>
 
               <Menu.Divider />
-              <Menu.Label>Settings</Menu.Label>
-              <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
-                Account settings
-              </Menu.Item>
-              {/* 
-              <Menu.Item icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}>
-                Change account
-              </Menu.Item> 
-              */}
-              <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>Logout</Menu.Item>
 
+              <Menu.Label>Settings</Menu.Label>
+              {/* <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
+              Account settings
+            </Menu.Item>
+            <Menu.Item icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}>
+              Change account
+            </Menu.Item> */}
+              <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>Logout</Menu.Item>
 
             </Menu.Dropdown>
           </Menu>
+          <ActionIcon
+            variant="outline"
+            color={dark ? 'yellow' : 'blue'}
+            onClick={() => toggleColorScheme()}
+            title="Toggle color scheme"
+          >
+            {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
+          </ActionIcon>
         </Group>
+
+
+        <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+
         <Transition transition="pop-top-right" duration={200} mounted={opened}>
           {(styles) => (
             <Paper className={classes.dropdown} withBorder style={styles}>
-              {tabs.map((tab) => (
-
-                <a
-                  key={tab}
-                  href={'#'}
-                  className={cx(classes.link, { [classes.linkActive]: active === tab })}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setActive(tab);
-                    close();
-                  }}
-                >
-                  {tab}
-                </a>
-              ))}
+              {items}
             </Paper>
           )}
         </Transition>
       </Container>
-      <Container>
-        <Tabs
-          defaultValue="Home"
-          variant="outline"
-          classNames={{
-            root: classes.tabs,
-            tabsList: classes.tabsList,
-            tab: classes.tab,
-          }}
-        >
-          <Tabs.List>{items}</Tabs.List>
-        </Tabs>
-      </Container>
-    </div>
+    </Header>
   );
 }

@@ -1,5 +1,8 @@
+import { Constants } from '@/constants';
+import { Container, Text } from '@mantine/core';
 import { useUser } from '@supabase/auth-helpers-react';
-import { HeaderTabs } from './HeaderWithTabs';
+import { HeaderResponsive } from './Header';
+
 
 const BaseLayout: React.FC<{ title: string, children: React.ReactNode }> = ({ title, children }) => {
     const user = useUser();
@@ -7,10 +10,12 @@ const BaseLayout: React.FC<{ title: string, children: React.ReactNode }> = ({ ti
     return (
         <div className="App">
             {/* <Header /> */}
-            {user && <HeaderTabs tabs={['Contracts', 'Projects', 'Invoices', 'Settings']} user={user} />}
+            {user && <HeaderResponsive links={Constants.privateRoutes} user={user} />}
             <main>
-                <h1 className='px-4'><span className='text-gradient'>{title}</span></h1>
-                {children}
+                <Container>
+                    <Text size={'xl'}>{title}</Text>
+                    {children}
+                </Container>
             </main>
             {/* <Footer /> */}
         </div>

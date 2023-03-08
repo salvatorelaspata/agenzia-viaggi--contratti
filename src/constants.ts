@@ -6,12 +6,16 @@ type itemHeaderProps = {
 export class Constants {
   public static readonly privateRoutes: itemHeaderProps[] = [
     {
+      name: 'HOME',
+      url: '/dashboard',
+    },
+    {
       name: 'CONTRATTI',
-      url: '/contracts',
+      url: '/contratti',
     },
     {
       name: 'CLIENTI',
-      url: '/catalogs',
+      url: '/clienti',
     },
   ]
   public static readonly publicRoutes: itemHeaderProps[] = [
