@@ -1,10 +1,13 @@
+import { ImageCheckbox } from "@/components/CheckboxWithImage";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Database } from "@/types/supabase";
-import { Button, createStyles, Divider, Flex, Group, Input, NumberInput, rem, Select, Stepper, TextInput } from "@mantine/core";
+import { Button, Center, createStyles, Divider, Flex, Group, Input, List, Modal, NumberInput, Paper, rem, SegmentedControl, Select, SimpleGrid, Space, Stepper, Switch, Table, Text, Textarea, TextInput, Title } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
 import { useUser } from "@supabase/auth-helpers-react";
+import { IconCheck, IconDropCircle, IconPlaylistAdd, IconUser, IconX } from "@tabler/icons-react";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 
@@ -36,7 +39,13 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
   const [submittedValues, setSubmittedValues] = useState('');
-  console.log(user)
+
+  const [partecipanti, setPartecipanti] = useState<Database['public']['Tables']['partecipanti']['Insert'][]>([]);
+  const [quote, setQuote] = useState<Database['public']['Tables']['quote']['Insert'][]>([]);
+  const [pagamenti, setPagamenti] = useState<Database['public']['Tables']['pagamenti']['Insert'][]>([]);
+
+  const [opened, { open, close }] = useDisclosure(false)
+
   const form = useForm({
     initialValues: {
       data: new Date(),
@@ -72,10 +81,10 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
 
   return (
     <BaseLayout title="Nuovo Contratto">
+      <form onSubmit={form.onSubmit((values) => setSubmittedValues(JSON.stringify(values, null, 2)))} className={classes.root}>
 
-      <Stepper active={active} onStepClick={setActive} breakpoint="sm" mt={"lg"}>
-        <Stepper.Step label="Dati Contratto" description="Dati Contraente">
-          <form onSubmit={form.onSubmit((values) => setSubmittedValues(JSON.stringify(values, null, 2)))} className={classes.root}>
+        <Stepper active={active} onStepClick={setActive} breakpoint="sm" mt={"lg"}>
+          <Stepper.Step label="Dati Contratto" description="Dati Contraente">
             <Divider labelPosition="center" label="Dati Contratto" mb={"lg"} mt={"lg"} />
             <DatePickerInput
               mt="md"
@@ -98,7 +107,6 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
               wrap="nowrap">
               <Select
                 w={'100%'}
-
                 withinPortal
                 data={['Costa Crociera', 'Altro (Specificare)']}
                 label="Tipo Pratica"
@@ -110,7 +118,20 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
             <TextInput mt={'md'} label="Numero Pratica" classNames={classes} {...form.getInputProps('pratica_numero')} />
 
             <Divider labelPosition="center" label="Dati Contraente" mb={"lg"} mt={"lg"} />
+            <Button mt="md" variant="outline" color="blue" onClick={open}>
+              Seleziona contraente
+            </Button>
 
+            <Modal opened={opened} onClose={close} title="SELEZIONA IL CONTRAENTE">
+              <List >
+                <Paper onClick={close}>
+                  <Text>antani</Text>
+                </Paper>
+                <Paper>
+                  <Text>prostanti</Text>
+                </Paper>
+              </List>
+            </Modal>
             <Flex gap="md"
               justify="center"
               align="center"
@@ -145,22 +166,187 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
               label="CAP"
               classNames={classes}
               {...form.getInputProps('contraente.cap')} />
-          </form>
-        </Stepper.Step>
-        <Stepper.Step label="Second step" description="Verify email">
-          Step 2 content: Verify email
-        </Stepper.Step>
-        <Stepper.Step label="Final step" description="Get full access">
-          Step 3 content: Get full access
-        </Stepper.Step>
-        <Stepper.Completed>
-          Completed, click back button to get to previous step
-        </Stepper.Completed>
-      </Stepper>
 
+          </Stepper.Step>
+          <Stepper.Step label="Dati Viaggio">
+            <Divider labelPosition="center" label="Dati Viaggio" mb={"md"} mt={"md"} />
+            <Flex gap="md"
+              justify="center"
+              align="center"
+              wrap="nowrap">
+              <DatePickerInput
+                mt="md"
+                popoverProps={{ withinPortal: true }}
+                label="Data Partenza"
+                w={'100%'}
+                placeholder=""
+                {...form.getInputProps('data_partenza')}
+                valueFormat="DD-MM-YYYY"
+                classNames={classes}
+                clearable={false}
+              />
+              <DatePickerInput
+                mt="md"
+                popoverProps={{ withinPortal: true }}
+                label="Data Arrivo"
+                w={'100%'}
+                placeholder=""
+                {...form.getInputProps('data_arrivo')}
+                valueFormat="DD-MM-YYYY"
+                classNames={classes}
+                clearable={false}
+              />
+            </Flex>
+            <Flex gap="md" mt="md">
+              <Switch mt="md" w={'100%'} label="Pacchetto Turistico" {...form.getInputProps('pacchetto_turistico')} />
+              <Switch mt="md" w={'100%'} label="Servizio Turistico" {...form.getInputProps('servizio_turistico')} />
+            </Flex>
+            <TextInput mt="md"
+              label="Partenza"
+              classNames={classes}
+              {...form.getInputProps('partenza')} />
+            <TextInput mt="md"
+              label="Arrivo"
+              classNames={classes}
+              {...form.getInputProps('arrivo')} />
+
+            <SimpleGrid
+              cols={4}
+              breakpoints={[
+                { maxWidth: 'md', cols: 2 },
+                { maxWidth: 'sm', cols: 1 },
+              ]}
+            >
+              {[
+                { key: 'd_carta_identita', description: '', title: 'Carta D\'identità' },
+                { key: 'd_passaporto', description: '', title: 'Passaporto' },
+                { key: 'd_vaccini', description: '', title: 'Vaccini' },
+                { key: 'd_visto', description: '', title: 'Visto' },
+              ].map((item) => <ImageCheckbox {...item} {...form.getInputProps(item.key)} key={item.key} />)}
+            </SimpleGrid>
+            <SimpleGrid
+              cols={4}
+              breakpoints={[
+                { maxWidth: 'md', cols: 2 },
+                { maxWidth: 'sm', cols: 1 },
+              ]}
+            >
+              <TextInput mt="md" label="N° Carta D'Identità" classNames={classes} {...form.getInputProps('d_carta_identita_numero')} disabled={!form.getInputProps('d_carta_identita').value} />
+              <TextInput mt="md" label="N° Passaporto" classNames={classes} {...form.getInputProps('d_passaporto_numero')} disabled={!form.getInputProps('d_passaporto').value} />
+              <TextInput mt="md" label="Tipo Vaccini" classNames={classes} {...form.getInputProps('d_vaccini_numero')} disabled={!form.getInputProps('d_vaccini').value} />
+              <TextInput mt="md" label="N° Visto" classNames={classes} {...form.getInputProps('d_visto_numero')} disabled={!form.getInputProps('d_visto').value} />
+            </SimpleGrid>
+            <Textarea mt="md" label="Descrizione del Viaggio" minRows={5} {...form.getInputProps('descrizione_viaggio')} />
+          </Stepper.Step>
+          <Stepper.Step label="Partecipanti">
+            <Divider labelPosition="center" label="Partecipanti" mb={"lg"} mt={"lg"} />
+            <Button size={'xs'} color={'gray'} leftIcon={<IconPlaylistAdd />}
+              onClick={() => {
+                setPartecipanti([...partecipanti, { contract_id: 0, nome: '', cognome: '', data_nascita: '', luogo_nascita: '', cf: '' }])
+              }}>Aggiungi Partecipante</Button>
+            <Table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>NOME</th>
+                  <th>COGNOME</th>
+                  <th>DATA DI NASCITA</th>
+                  <th>LUOGO DI NASCITA</th>
+                  <th>CODICE FISCALE</th>
+                  <th>INDIRIZZO</th>
+                  <th>CAP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {partecipanti.map((item: any, index: number) => (
+                  <tr key={index}>
+                    <td><IconUser /></td>
+                    <td><TextInput /></td> {/* item.nome */}
+                    <td><TextInput /> </td> {/* item.cognome */}
+                    <td><DatePickerInput /> </td> {/* item.data_nascita */}
+                    <td><TextInput /> </td> {/* item.luogo_nascita */}
+                    <td><TextInput /> </td> {/* item.cf */}
+                    <td><TextInput /> </td> {/* item.indirizzo */}
+                    <td><TextInput /> </td> {/* item.cap */}
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan={8}>
+                    <Center m={20}>
+                      <Text size={'lg'}>Totale Partecipanti: {partecipanti.length}</Text>
+                    </Center>
+                  </td>
+                </tr>
+              </tfoot>
+            </Table>
+          </Stepper.Step>
+          <Stepper.Step label="Quote" description="Pagamenti">
+            <Divider labelPosition="center" label="Quote" mb={"lg"} mt={"lg"} />
+            <Button size={'xs'} color={'gray'} leftIcon={<IconPlaylistAdd />}
+              onClick={() => {
+                setQuote([...quote, { contract_id: 0, servizi: '', importo: 0, n_pax: 0, totale: 0 }])
+              }}>Aggiungi Quota</Button>
+            <Table>
+              <thead>
+                <tr>
+                  <th>SERVIZI</th>
+                  <th>IMPORTO</th>
+                  <th>N. PAX</th>
+                  <th>TOTALE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {quote.map((item: any, index: number) => (
+                  <tr key={index}>
+                    <td><TextInput /></td> {/* item.servizio */}
+                    <td><NumberInput /></td> {/* item.importo */}
+                    <td><NumberInput /></td> {/* item.pax */}
+                    <td><TextInput /></td> {/* item.totale */}
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <Divider labelPosition="center" label="Pagamenti" mb={"lg"} mt={"lg"} />
+            <Button size={'xs'} color={'gray'} leftIcon={<IconPlaylistAdd />}
+              onClick={() => {
+                const data = new Date()
+                setPagamenti([...pagamenti, {
+                  contract_id: 0,
+                  data: `${data.getDate()}-${data.getMonth() + 1}-${data.getFullYear()}`,
+                  descrizione: '',
+                  importo: 0
+                }])
+              }}>Aggiungi Pagamento</Button>
+            <Table>
+              <thead>
+                <tr>
+                  <th>DATA</th>
+                  <th>DESCRIZIONE</th>
+                  <th>IMPORTO</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pagamenti.map((item: any, index: number) => (
+                  <tr key={index}>
+                    <td><DatePickerInput /></td> {/* item.data */}
+                    <td><Textarea /></td> {/* item.descrizione */}
+                    <td><NumberInput /></td> {/* item.importo */}
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </Stepper.Step>
+          <Stepper.Completed>
+            <Text>Preview</Text>
+            <Text>Export PDF</Text>
+          </Stepper.Completed>
+        </Stepper>
+      </form>
       <Group position="center" mt="xl">
-        <Button variant="default" onClick={prevStep}>Back</Button>
-        <Button onClick={nextStep}>Next step</Button>
+        <Button variant="default" onClick={prevStep}>Indietro</Button>
+        <Button onClick={nextStep}>Avanti</Button>
       </Group>
     </BaseLayout >
   );

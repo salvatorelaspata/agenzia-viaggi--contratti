@@ -41,7 +41,7 @@ export interface Database {
           data_arrivo: string
           data_partenza: string
           descrizione_viaggio: string
-          id: number
+          id?: number
           operatore: string
           pacchetto_turistico: boolean
           partenza: string
@@ -73,32 +73,32 @@ export interface Database {
       }
       contraente: {
         Row: {
-          cap: number
+          cap: string
           cf: string
           cognome: string
           data_nascita: string
           id: number
-          indirizzo: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Insert: {
-          cap: number
+          cap: string
           cf: string
           cognome: string
           data_nascita: string
-          id: number
-          indirizzo: number
+          id?: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Update: {
-          cap?: number
+          cap?: string
           cf?: string
           cognome?: string
           data_nascita?: string
           id?: number
-          indirizzo?: number
+          indirizzo?: string
           luogo_nascita?: string
           nome?: string
         }
@@ -115,7 +115,7 @@ export interface Database {
           contract_id: number
           data: string
           descrizione: string
-          id: number
+          id?: number
           importo: number
         }
         Update: {
@@ -128,7 +128,7 @@ export interface Database {
       }
       partecipanti: {
         Row: {
-          cf: number
+          cf: string
           cognome: string
           contract_id: number
           data_nascita: string
@@ -137,16 +137,16 @@ export interface Database {
           nome: string
         }
         Insert: {
-          cf: number
+          cf: string
           cognome: string
           contract_id: number
           data_nascita: string
-          id: number
+          id?: number
           luogo_nascita: string
           nome: string
         }
         Update: {
-          cf?: number
+          cf?: string
           cognome?: string
           contract_id?: number
           data_nascita?: string
@@ -166,7 +166,7 @@ export interface Database {
         }
         Insert: {
           contract_id: number
-          id: number
+          id?: number
           importo: number
           n_pax: number
           servizi: string
