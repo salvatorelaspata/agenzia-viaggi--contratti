@@ -1,3 +1,4 @@
+import { AutocompleteCities } from "@/components/AutocompleteCities";
 import { ImageCheckbox } from "@/components/CheckboxWithImage";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Database } from "@/types/supabase";
@@ -6,8 +7,7 @@ import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
-import { useUser } from "@supabase/auth-helpers-react";
-import { IconCheck, IconDropCircle, IconPlaylistAdd, IconUser, IconX } from "@tabler/icons-react";
+import { IconPlaylistAdd, IconTrash, IconUser } from "@tabler/icons-react";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 
@@ -73,7 +73,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
       d_passaporto: false,
       d_vaccini: false,
       descrizione_viaggio: '',
-      partecipanti: [],
+      partecipanti: [] as Database['public']['Tables']['partecipanti']['Insert'][],
       quote: [],
       pagamenti: [],
     },
@@ -198,18 +198,25 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
               />
             </Flex>
             <Flex gap="md" mt="md">
-              <Switch mt="md" w={'100%'} label="Pacchetto Turistico" {...form.getInputProps('pacchetto_turistico')} />
-              <Switch mt="md" w={'100%'} label="Servizio Turistico" {...form.getInputProps('servizio_turistico')} />
+              <Switch w={'100%'} label="Pacchetto Turistico" {...form.getInputProps('pacchetto_turistico')} />
+              <Switch w={'100%'} label="Servizio Turistico" {...form.getInputProps('servizio_turistico')} />
             </Flex>
-            <TextInput mt="md"
-              label="Partenza"
-              classNames={classes}
-              {...form.getInputProps('partenza')} />
-            <TextInput mt="md"
-              label="Arrivo"
-              classNames={classes}
-              {...form.getInputProps('arrivo')} />
-
+            <Flex gap="md" mt="md">
+              {/* <TextInput mt="md"
+                w={'100%'}
+                label="Partenza da"
+                classNames={classes}
+                {...form.getInputProps('partenza')} /> */}
+              <AutocompleteCities label="Partenza Da" form={form.getInputProps('partenza')} classes={classes} />
+              <AutocompleteCities label="Arrivo A" form={form.getInputProps('arrivo')} classes={classes} />
+              {/* <TextInput mt="md"
+                w={'100%'}
+                label="Arrivo a"
+                classNames={classes}
+                {...form.getInputProps('arrivo')} /> */}
+            </Flex>
+            <Textarea mt="md" label="Descrizione del Viaggio" minRows={5} {...form.getInputProps('descrizione_viaggio')} />
+            <Divider labelPosition="center" label="Documentazione Necessaria" mb={"md"} mt={"md"} />
             <SimpleGrid
               cols={4}
               breakpoints={[
@@ -236,7 +243,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
               <TextInput mt="md" label="Tipo Vaccini" classNames={classes} {...form.getInputProps('d_vaccini_numero')} disabled={!form.getInputProps('d_vaccini').value} />
               <TextInput mt="md" label="N° Visto" classNames={classes} {...form.getInputProps('d_visto_numero')} disabled={!form.getInputProps('d_visto').value} />
             </SimpleGrid>
-            <Textarea mt="md" label="Descrizione del Viaggio" minRows={5} {...form.getInputProps('descrizione_viaggio')} />
+
           </Stepper.Step>
           <Stepper.Step label="Partecipanti">
             <Divider labelPosition="center" label="Partecipanti" mb={"lg"} mt={"lg"} />
@@ -244,30 +251,33 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
               onClick={() => {
                 setPartecipanti([...partecipanti, { contract_id: 0, nome: '', cognome: '', data_nascita: '', luogo_nascita: '', cf: '' }])
               }}>Aggiungi Partecipante</Button>
+
             <Table>
               <thead>
                 <tr>
-                  <th></th>
-                  <th>NOME</th>
-                  <th>COGNOME</th>
-                  <th>DATA DI NASCITA</th>
-                  <th>LUOGO DI NASCITA</th>
+                  <th><Flex direction={'column'}>
+                    <Text>NOME</Text>
+                    <Text>COGNOME</Text>
+                  </Flex></th>
+                  <th>DATA E LUOGO DI NASCITA</th>
                   <th>CODICE FISCALE</th>
                   <th>INDIRIZZO</th>
                   <th>CAP</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 {partecipanti.map((item: any, index: number) => (
                   <tr key={index}>
-                    <td><IconUser /></td>
-                    <td><TextInput /></td> {/* item.nome */}
-                    <td><TextInput /> </td> {/* item.cognome */}
-                    <td><DatePickerInput /> </td> {/* item.data_nascita */}
-                    <td><TextInput /> </td> {/* item.luogo_nascita */}
+                    <td><Flex direction={'column'}><TextInput placeholder="Nome" m={'xs'} /><TextInput placeholder="Cognome" m={'xs'} /></Flex></td> {/* item.nome */} {/* item.cognome */}
+                    <td><Flex direction={'column'}><DatePickerInput mb={'lg'} placeholder="Data di Nascita" />
+                      <AutocompleteCities placeholder="Luogo di Nascita" label="" classes={null} form={{ value: '', onChange: () => { } }} /></Flex> </td> {/* item.data_nascita */} {/* item.luogo_nascita */}
                     <td><TextInput /> </td> {/* item.cf */}
-                    <td><TextInput /> </td> {/* item.indirizzo */}
+                    <td><Textarea /> </td> {/* item.indirizzo */}
                     <td><TextInput /> </td> {/* item.cap */}
+                    <td><IconTrash onClick={() => {
+                      setPartecipanti(partecipanti.filter((item: any, i: number) => i !== index))
+                    }} /></td>
                   </tr>
                 ))}
               </tbody>

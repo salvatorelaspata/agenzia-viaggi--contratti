@@ -9,6 +9,29 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      cities: {
+        Row: {
+          country: string
+          geonameid: number
+          id: number
+          name: string
+          subcountry: string | null
+        }
+        Insert: {
+          country: string
+          geonameid: number
+          id?: number
+          name: string
+          subcountry?: string | null
+        }
+        Update: {
+          country?: string
+          geonameid?: number
+          id?: number
+          name?: string
+          subcountry?: string | null
+        }
+      }
       contracts: {
         Row: {
           arrivo: string

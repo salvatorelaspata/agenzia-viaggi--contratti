@@ -144,7 +144,7 @@ export function HeaderResponsive({ links, user }: HeaderResponsiveProps) {
 
   return (
     <Header height={HEADER_HEIGHT} mb={10} className={classes.root}>
-      <Container className={classes.header}>
+      <Container fluid maw={'1024px'} className={classes.header}>
         Logo
         <Group spacing={5} className={classes.links}>
           {items}

@@ -12,7 +12,7 @@ const BaseLayout: React.FC<{ title: string, children: React.ReactNode }> = ({ ti
             {/* <Header /> */}
             {user && <HeaderResponsive links={Constants.privateRoutes} user={user} />}
             <main>
-                <Container > {/* fluid={true} */}
+                <Container fluid maw={'1024px'}> {/* fluid={true} */}
                     <Text size={'xl'}>{title}</Text>
                     {children}
                 </Container>
