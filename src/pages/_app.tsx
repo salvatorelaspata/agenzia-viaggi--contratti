@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 import { Database } from '@/types/supabase'
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core'
+import { Notifications } from '@mantine/notifications'
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import { Session } from '@supabase/supabase-js'
@@ -19,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps<{ initialSession:
       initialSession={pageProps.initialSession}
     >
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <Notifications />
         <MantineProvider
           withGlobalStyles
           withNormalizeCSS

@@ -1,17 +1,16 @@
 import BaseLayout from '@/components/layout/BaseLayout'
-// import Table from '@/components/Table'
 import { Database } from '@/types/supabase'
 import { Table, Text } from '@mantine/core'
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
-// import { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 interface ContractsProps {
     contracts: Database['public']['Tables']['contracts']['Row'][],
     count: number
 }
 const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
-    // const router = useRouter()
+    const router = useRouter()
 
     return (
         <BaseLayout title={`Contratti (${count})`}>
@@ -19,11 +18,6 @@ const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
                 Nuovo Contratto
             </Link>
             {contracts.length > 0 ? <Table striped highlightOnHover withBorder withColumnBorders>
-                {/* <Table data={contracts} onRowClick={
-                (row: Database['public']['Tables']['contracts']['Row']) => {
-                    router.push(`/contracts/${row.id}`)
-                }
-            } /> */}
                 <thead>
                     <tr>
                         {Object.keys(contracts[0]).map((key) => (
@@ -33,7 +27,7 @@ const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
                 </thead>
                 <tbody>
                     {contracts.map((contract) => (
-                        <tr key={contract.id}>
+                        <tr key={contract.id} onClick={() => router.push(`/clienti/${contract.id}`)}>
                             {Object.values(contract).map((value, i) => (
                                 <td key={i}>{value}</td>
                             ))}

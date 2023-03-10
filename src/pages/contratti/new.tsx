@@ -140,7 +140,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
                 </Paper>
               </List>
             </Modal>
-            <FormContraente form={form} classes={classes} />
+            <FormContraente form={form} classes={classes} disabled={false} />
           </Stepper.Step>
           <Stepper.Step label="Dati Viaggio">
             <Divider labelPosition="center" label="Dati Viaggio" mb={"md"} mt={"md"} />

@@ -1,7 +1,7 @@
 import { Flex, TextInput } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 
-export const FormContraente: React.FC<{ form: any, classes: any }> = ({ form, classes }) => {
+export const FormContraente: React.FC<{ form: any, classes: any, disabled?: boolean }> = ({ form, classes, disabled = true }) => {
   return (
     <>
       <Flex gap="md"
@@ -9,33 +9,38 @@ export const FormContraente: React.FC<{ form: any, classes: any }> = ({ form, cl
         justify="center"
         align="center"
         wrap="nowrap">
-        <TextInput w={'100%'} label="Nome" classNames={classes} {...form.getInputProps('contraente.nome')} />
-        <TextInput w={'100%'} label="Cognome" classNames={classes} {...form.getInputProps('contraente.cognome')} />
+        <TextInput disabled={disabled} w={'100%'} label="Nome" classNames={classes} {...form.getInputProps('contraente.nome')} />
+        <TextInput disabled={disabled} w={'100%'} label="Cognome" classNames={classes} {...form.getInputProps('contraente.cognome')} />
       </Flex>
-      <DatePickerInput
+      {!disabled ? <DatePickerInput
         mt="md"
         popoverProps={{ withinPortal: true }}
         label="Data di Nascita"
-        placeholder=""
+        placeholder="Seleziona la data di nascita"
         {...form.getInputProps('contraente.data_nascita')}
+        onChangeCapture={(event: any) => {
+          form.onChange(event)
+        }}
+        onDateChange={(date) => {
+          form.onChange({ target: { value: date } })
+        }}
         valueFormat="DD-MM-YYYY"
         classNames={classes}
-        contentEditable={false}
-        clearable={true}
-      />
-      <TextInput mt="md"
+        clearable={false}
+      /> : <TextInput disabled={disabled} mt="md" label="Data di Nascita" classNames={classes} {...form.getInputProps('contraente.data_nascita')} />}
+      <TextInput disabled={disabled} mt="md"
         label="Luogo di Nascita"
         classNames={classes}
         {...form.getInputProps('contraente.luogo_nascita')} />
-      <TextInput mt="md"
+      <TextInput disabled={disabled} mt="md"
         label="Codice Fiscale"
         classNames={classes}
         {...form.getInputProps('contraente.cf')} />
-      <TextInput mt="md"
+      <TextInput disabled={disabled} mt="md"
         label="Indirizzo"
         classNames={classes}
         {...form.getInputProps('contraente.indirizzo')} />
-      <TextInput mt="md"
+      <TextInput disabled={disabled} mt="md" mb="md"
         label="CAP"
         classNames={classes}
         {...form.getInputProps('contraente.cap')} />
