@@ -35,7 +35,7 @@ const useStyles = createStyles((theme) => ({
 const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const { classes } = useStyles();
   const [active, setActive] = useState(0);
-  const nextStep = () => setActive((current) => (current < 3 ? current + 1 : current));
+  const nextStep = () => setActive((current) => (current < 4 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
   const [submittedValues, setSubmittedValues] = useState('');
@@ -43,7 +43,6 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const [partecipanti, setPartecipanti] = useState<Database['public']['Tables']['partecipanti']['Insert'][]>([]);
   const [quote, setQuote] = useState<Database['public']['Tables']['quote']['Insert'][]>([]);
   const [pagamenti, setPagamenti] = useState<Database['public']['Tables']['pagamenti']['Insert'][]>([]);
-
   const [opened, { open, close }] = useDisclosure(false)
 
   const form = useForm({
@@ -72,16 +71,24 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
       d_carta_identita: false,
       d_passaporto: false,
       d_vaccini: false,
-      descrizione_viaggio: '',
-      partecipanti: [] as Database['public']['Tables']['partecipanti']['Insert'][],
-      quote: [],
-      pagamenti: [],
+      descrizione_viaggio: ''
     },
   });
 
+  const onChangeArrayObjProp = (fn: Function, array: any[], index: number, prop: string, value: string) => {
+    array[index][prop] = value
+    return fn([...array])
+  };
+
+  const onSaveContract = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmittedValues(JSON.stringify(form.values, null, 2));
+    console.log({ form: form.values, partecipanti, quote, pagamenti })
+  };
+
   return (
     <BaseLayout title="Nuovo Contratto">
-      <form onSubmit={form.onSubmit((values) => setSubmittedValues(JSON.stringify(values, null, 2)))} className={classes.root}>
+      <form onSubmit={onSaveContract} className={classes.root}>
 
         <Stepper active={active} onStepClick={setActive} breakpoint="sm" mt={"lg"}>
           <Stepper.Step label="Dati Contratto" description="Dati Contraente">
@@ -249,7 +256,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
             <Divider labelPosition="center" label="Partecipanti" mb={"lg"} mt={"lg"} />
             <Button size={'xs'} color={'gray'} leftIcon={<IconPlaylistAdd />}
               onClick={() => {
-                setPartecipanti([...partecipanti, { contract_id: 0, nome: '', cognome: '', data_nascita: '', luogo_nascita: '', cf: '' }])
+                setPartecipanti([...partecipanti, { contract_id: 0, nome: '', cognome: '', data_nascita: '', luogo_nascita: '', cf: '', indirizzo: '', cap: '' }])
               }}>Aggiungi Partecipante</Button>
 
             <Table>
@@ -267,14 +274,24 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
                 </tr>
               </thead>
               <tbody>
-                {partecipanti.map((item: any, index: number) => (
+                {partecipanti.map((item: Database['public']['Tables']['partecipanti']['Insert'], index: number) => (
                   <tr key={index}>
-                    <td><Flex direction={'column'}><TextInput placeholder="Nome" m={'xs'} /><TextInput placeholder="Cognome" m={'xs'} /></Flex></td> {/* item.nome */} {/* item.cognome */}
-                    <td><Flex direction={'column'}><DatePickerInput mb={'lg'} placeholder="Data di Nascita" />
-                      <AutocompleteCities placeholder="Luogo di Nascita" label="" classes={null} form={{ value: '', onChange: () => { } }} /></Flex> </td> {/* item.data_nascita */} {/* item.luogo_nascita */}
-                    <td><TextInput /> </td> {/* item.cf */}
-                    <td><Textarea /> </td> {/* item.indirizzo */}
-                    <td><TextInput /> </td> {/* item.cap */}
+                    <td><Flex direction={'column'}>
+                      <TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'nome', event?.target.value)} value={partecipanti[index].nome} placeholder="Nome" m={'xs'} />
+                      <TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'cognome', event?.target.value)} value={partecipanti[index].cognome} placeholder="Cognome" m={'xs'} />
+                    </Flex></td> {/* partecipanti[index].nome */} {/* partecipanti[index].cognome */}
+                    <td><Flex direction={'column'}>
+                      <DatePickerInput onChange={(value) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'data_nascita', value?.toISOString() || '')} date={partecipanti[index].data_nascita ? new Date(partecipanti[index].data_nascita) : new Date()} mb={'lg'} placeholder="Data di Nascita" />
+                      <AutocompleteCities placeholder="Luogo di Nascita" label="" classes={null} form={{
+                        value: partecipanti[index].luogo_nascita, onChange: (event: any) => {
+                          console.log(event)
+                          onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'luogo_nascita', event)
+                        }
+                      }} />
+                    </Flex> </td> {/* partecipanti[index].data_nascita */} {/* partecipanti[index].luogo_nascita */}
+                    <td><TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'cf', event?.target.value)} value={partecipanti[index].cf} /> </td> {/* partecipanti[index].cf */}
+                    <td><Textarea onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'indirizzo', event?.target.value)} value={partecipanti[index].indirizzo} /> </td> {/* partecipanti[index].indirizzo */}
+                    <td><TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'cap', event?.target.value)} value={partecipanti[index].cap} /> </td> {/* partecipanti[index].cap */}
                     <td><IconTrash onClick={() => {
                       setPartecipanti(partecipanti.filter((item: any, i: number) => i !== index))
                     }} /></td>
@@ -308,12 +325,12 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
                 </tr>
               </thead>
               <tbody>
-                {quote.map((item: any, index: number) => (
+                {quote.map((item: Database['public']['Tables']['quote']['Insert'], index: number) => (
                   <tr key={index}>
-                    <td><TextInput /></td> {/* item.servizio */}
-                    <td><NumberInput decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.importo */}
-                    <td><NumberInput decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.pax */}
-                    <td><TextInput /></td> {/* item.totale */}
+                    <td><TextInput value={quote[index]['servizi'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'servizi', event?.target.value)} /></td> {/* item.servizio */}
+                    <td><NumberInput value={quote[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'importo', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.importo */}
+                    <td><NumberInput value={quote[index]['n_pax'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'n_pax', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.pax */}
+                    <td><TextInput value={quote[index]['totale'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'totale', event?.target.value)} /></td> {/* item.totale */}
                   </tr>
                 ))}
               </tbody>
@@ -338,11 +355,11 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
                 </tr>
               </thead>
               <tbody>
-                {pagamenti.map((item: any, index: number) => (
+                {pagamenti.map((item: Database['public']['Tables']['pagamenti']['Insert'], index: number) => (
                   <tr key={index}>
-                    <td><DatePickerInput /></td> {/* item.data */}
-                    <td><Textarea /></td> {/* item.descrizione */}
-                    <td><NumberInput decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.importo */}
+                    <DatePickerInput onChange={(value) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'data', value?.toISOString() || '')} date={pagamenti[index].data ? new Date(pagamenti[index].data) : new Date()} mb={'lg'} placeholder="Data di Nascita" />
+                    <td><TextInput value={pagamenti[index]['descrizione'] || ''} onChange={(event) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'descrizione', event?.target.value)} /></td> {/* item.descrizione */}
+                    <td><NumberInput value={pagamenti[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'importo', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -351,6 +368,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
           <Stepper.Completed>
             <Text>Preview</Text>
             <Text>Export PDF</Text>
+            <Button type="submit">Salva</Button>
           </Stepper.Completed>
         </Stepper>
       </form>

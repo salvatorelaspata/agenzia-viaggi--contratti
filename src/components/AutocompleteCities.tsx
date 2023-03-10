@@ -7,7 +7,7 @@ interface ItemProps extends SelectItemProps {
   country: string;
   subcountry: string;
 }
-export const AutocompleteCities: React.FC<{ label: string, placeholder: string, form: any, classes: any }> = ({ label, placeholder, form, classes }) => {
+export const AutocompleteCities: React.FC<{ label: string, placeholder?: string, form: any, classes: any }> = ({ label, placeholder, form, classes }) => {
 
   const supabase = useSupabaseClient<Database>()
   const [cities, setCities] = useState<Partial<Database['public']['Tables']['cities']['Row']>[]>([])

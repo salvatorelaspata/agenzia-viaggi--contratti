@@ -38,3 +38,12 @@ totale (€) (calculated)
 data
 descrizione
 importo (€)
+
+TODO
+[ ] Salvataggio contratti
+[ ] Gestione stato contratto (Bozza, In Corso, Completato)
+[ ] Visualizzazione Contratto
+[ ] Nuovo Contraente
+[ ] Salvataggio Contraente
+[ ] Refactoring WizardStep
+[ ] Gestione "Seleziona contraente"

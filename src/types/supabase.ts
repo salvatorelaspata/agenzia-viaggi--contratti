@@ -151,29 +151,35 @@ export interface Database {
       }
       partecipanti: {
         Row: {
+          cap: string
           cf: string
           cognome: string
           contract_id: number
           data_nascita: string
           id: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Insert: {
+          cap: string
           cf: string
           cognome: string
           contract_id: number
           data_nascita: string
           id?: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Update: {
+          cap?: string
           cf?: string
           cognome?: string
           contract_id?: number
           data_nascita?: string
           id?: number
+          indirizzo?: string
           luogo_nascita?: string
           nome?: string
         }
