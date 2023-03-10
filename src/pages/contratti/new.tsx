@@ -311,8 +311,8 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
                 {quote.map((item: any, index: number) => (
                   <tr key={index}>
                     <td><TextInput /></td> {/* item.servizio */}
-                    <td><NumberInput /></td> {/* item.importo */}
-                    <td><NumberInput /></td> {/* item.pax */}
+                    <td><NumberInput decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.importo */}
+                    <td><NumberInput decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.pax */}
                     <td><TextInput /></td> {/* item.totale */}
                   </tr>
                 ))}
@@ -342,7 +342,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
                   <tr key={index}>
                     <td><DatePickerInput /></td> {/* item.data */}
                     <td><Textarea /></td> {/* item.descrizione */}
-                    <td><NumberInput /></td> {/* item.importo */}
+                    <td><NumberInput decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.importo */}
                   </tr>
                 ))}
               </tbody>
