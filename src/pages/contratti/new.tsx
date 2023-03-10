@@ -1,5 +1,6 @@
 import { AutocompleteCities } from "@/components/AutocompleteCities";
 import { ImageCheckbox } from "@/components/CheckboxWithImage";
+import { FormContraente } from "@/components/FormContraente";
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Database } from "@/types/supabase";
 import { Button, Center, createStyles, Divider, Flex, Group, Input, List, Modal, NumberInput, Paper, rem, SegmentedControl, Select, SimpleGrid, Space, Stepper, Switch, Table, Text, Textarea, TextInput, Title } from "@mantine/core";
@@ -139,41 +140,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
                 </Paper>
               </List>
             </Modal>
-            <Flex gap="md"
-              justify="center"
-              align="center"
-              mt="md"
-              wrap="nowrap">
-              <TextInput w={'100%'} label="Nome" classNames={classes} {...form.getInputProps('contraente.nome')} />
-              <TextInput w={'100%'} label="Cognome" classNames={classes} {...form.getInputProps('contraente.cognome')} />
-            </Flex>
-            <DatePickerInput
-              mt="md"
-              popoverProps={{ withinPortal: true }}
-              label="Data di Nascita"
-              placeholder=""
-              {...form.getInputProps('contraente.data_nascita')}
-              valueFormat="DD-MM-YYYY"
-              classNames={classes}
-              clearable={false}
-            />
-            <TextInput mt="md"
-              label="Luogo di Nascita"
-              classNames={classes}
-              {...form.getInputProps('contraente.luogo_nascita')} />
-            <TextInput mt="md"
-              label="Codice Fiscale"
-              classNames={classes}
-              {...form.getInputProps('contraente.cf')} />
-            <TextInput mt="md"
-              label="Indirizzo"
-              classNames={classes}
-              {...form.getInputProps('contraente.indirizzo')} />
-            <TextInput mt="md"
-              label="CAP"
-              classNames={classes}
-              {...form.getInputProps('contraente.cap')} />
-
+            <FormContraente form={form} classes={classes} />
           </Stepper.Step>
           <Stepper.Step label="Dati Viaggio">
             <Divider labelPosition="center" label="Dati Viaggio" mb={"md"} mt={"md"} />
