@@ -2,12 +2,17 @@ import { AutocompleteCities } from "@/components/AutocompleteCities";
 import { ImageCheckbox } from "@/components/CheckboxWithImage";
 import { FormContraente } from "@/components/FormContraente";
 import BaseLayout from "@/components/layout/BaseLayout";
+import { DatiContratto } from "@/components/WizardContratti/DatiContratto";
+import { DatiViaggio } from "@/components/WizardContratti/DatiViaggio";
+import { Partecipanti } from "@/components/WizardContratti/Partecipanti";
+import { QuotePagamenti } from "@/components/WizardContratti/QuotePagamenti";
 import { Database } from "@/types/supabase";
 import { Button, Center, createStyles, Divider, Flex, Group, Input, List, Modal, NumberInput, Paper, rem, SegmentedControl, Select, SimpleGrid, Space, Stepper, Switch, Table, Text, Textarea, TextInput, Title } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { IconPlaylistAdd, IconTrash, IconUser } from "@tabler/icons-react";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
@@ -44,7 +49,6 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const [partecipanti, setPartecipanti] = useState<Database['public']['Tables']['partecipanti']['Insert'][]>([]);
   const [quote, setQuote] = useState<Database['public']['Tables']['quote']['Insert'][]>([]);
   const [pagamenti, setPagamenti] = useState<Database['public']['Tables']['pagamenti']['Insert'][]>([]);
-  const [opened, { open, close }] = useDisclosure(false)
 
   const form = useForm({
     initialValues: {
@@ -53,13 +57,13 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
       pratica_tipo: '',
       pratica_numero: '',
       contraente: {
-        nome: '',
-        cognome: '',
-        data_nascita: null,
-        luogo_nascita: '',
+        cap: '',
         cf: '',
+        cognome: '',
+        data_nascita: new Date(1970, 0, 1),
         indirizzo: '',
-        cap: ''
+        luogo_nascita: '',
+        nome: '',
       },
       data_partenza: null,
       data_arrivo: null,
@@ -93,244 +97,16 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
 
         <Stepper active={active} onStepClick={setActive} breakpoint="sm" mt={"lg"}>
           <Stepper.Step label="Dati Contratto" description="Dati Contraente">
-            <Divider labelPosition="center" label="Dati Contratto" mb={"lg"} mt={"lg"} />
-            <DatePickerInput
-              mt="md"
-              popoverProps={{ withinPortal: true }}
-              label="Data"
-              placeholder=""
-              {...form.getInputProps('data')}
-              valueFormat="DD-MM-YYYY"
-              classNames={classes}
-              clearable={false}
-            />
-            <TextInput mt="md"
-              label="Operatore"
-              classNames={classes}
-              {...form.getInputProps('operatore')} />
-            <Flex gap="md"
-              justify="center"
-              align="center"
-              mt="md"
-              wrap="nowrap">
-              <Select
-                w={'100%'}
-                withinPortal
-                data={['Costa Crociera', 'Altro (Specificare)']}
-                label="Tipo Pratica"
-                classNames={classes}
-                {...form.getInputProps('pratica_tipo')}
-              />
-              {form.getInputProps('pratica_tipo').value.startsWith('Altro') && <TextInput hidden={true} w={'100%'} label="Altro" classNames={classes} {...form.getInputProps('pratica_tipo_altro')} />}
-            </Flex>
-            <TextInput mt={'md'} label="Numero Pratica" classNames={classes} {...form.getInputProps('pratica_numero')} />
-
-            <Divider labelPosition="center" label="Dati Contraente" mb={"lg"} mt={"lg"} />
-            <Button mt="md" variant="outline" color="blue" onClick={open}>
-              Seleziona contraente
-            </Button>
-
-            <Modal opened={opened} onClose={close} title="SELEZIONA IL CONTRAENTE">
-              <List >
-                <Paper onClick={close}>
-                  <Text>antani</Text>
-                </Paper>
-                <Paper>
-                  <Text>prostanti</Text>
-                </Paper>
-              </List>
-            </Modal>
-            <FormContraente form={form} classes={classes} disabled={false} />
+            <DatiContratto form={form} classes={classes} />
           </Stepper.Step>
           <Stepper.Step label="Dati Viaggio">
-            <Divider labelPosition="center" label="Dati Viaggio" mb={"md"} mt={"md"} />
-            <Flex gap="md"
-              justify="center"
-              align="center"
-              wrap="nowrap">
-              <DatePickerInput
-                mt="md"
-                popoverProps={{ withinPortal: true }}
-                label="Data Partenza"
-                w={'100%'}
-                placeholder=""
-                {...form.getInputProps('data_partenza')}
-                valueFormat="DD-MM-YYYY"
-                classNames={classes}
-                clearable={false}
-              />
-              <DatePickerInput
-                mt="md"
-                popoverProps={{ withinPortal: true }}
-                label="Data Arrivo"
-                w={'100%'}
-                placeholder=""
-                {...form.getInputProps('data_arrivo')}
-                valueFormat="DD-MM-YYYY"
-                classNames={classes}
-                clearable={false}
-              />
-            </Flex>
-            <Flex gap="md" mt="md">
-              <Switch w={'100%'} label="Pacchetto Turistico" {...form.getInputProps('pacchetto_turistico')} />
-              <Switch w={'100%'} label="Servizio Turistico" {...form.getInputProps('servizio_turistico')} />
-            </Flex>
-            <Flex gap="md" mt="md">
-              {/* <TextInput mt="md"
-                w={'100%'}
-                label="Partenza da"
-                classNames={classes}
-                {...form.getInputProps('partenza')} /> */}
-              <AutocompleteCities label="Partenza Da" form={form.getInputProps('partenza')} classes={classes} />
-              <AutocompleteCities label="Arrivo A" form={form.getInputProps('arrivo')} classes={classes} />
-              {/* <TextInput mt="md"
-                w={'100%'}
-                label="Arrivo a"
-                classNames={classes}
-                {...form.getInputProps('arrivo')} /> */}
-            </Flex>
-            <Textarea mt="md" label="Descrizione del Viaggio" minRows={5} {...form.getInputProps('descrizione_viaggio')} />
-            <Divider labelPosition="center" label="Documentazione Necessaria" mb={"md"} mt={"md"} />
-            <SimpleGrid
-              cols={4}
-              breakpoints={[
-                { maxWidth: 'md', cols: 2 },
-                { maxWidth: 'sm', cols: 1 },
-              ]}
-            >
-              {[
-                { key: 'd_carta_identita', description: '', title: 'Carta D\'identità' },
-                { key: 'd_passaporto', description: '', title: 'Passaporto' },
-                { key: 'd_vaccini', description: '', title: 'Vaccini' },
-                { key: 'd_visto', description: '', title: 'Visto' },
-              ].map((item) => <ImageCheckbox {...item} {...form.getInputProps(item.key)} key={item.key} />)}
-            </SimpleGrid>
-            <SimpleGrid
-              cols={4}
-              breakpoints={[
-                { maxWidth: 'md', cols: 2 },
-                { maxWidth: 'sm', cols: 1 },
-              ]}
-            >
-              <TextInput mt="md" label="N° Carta D'Identità" classNames={classes} {...form.getInputProps('d_carta_identita_numero')} disabled={!form.getInputProps('d_carta_identita').value} />
-              <TextInput mt="md" label="N° Passaporto" classNames={classes} {...form.getInputProps('d_passaporto_numero')} disabled={!form.getInputProps('d_passaporto').value} />
-              <TextInput mt="md" label="Tipo Vaccini" classNames={classes} {...form.getInputProps('d_vaccini_numero')} disabled={!form.getInputProps('d_vaccini').value} />
-              <TextInput mt="md" label="N° Visto" classNames={classes} {...form.getInputProps('d_visto_numero')} disabled={!form.getInputProps('d_visto').value} />
-            </SimpleGrid>
-
+            <DatiViaggio form={form} classes={classes} />
           </Stepper.Step>
           <Stepper.Step label="Partecipanti">
-            <Divider labelPosition="center" label="Partecipanti" mb={"lg"} mt={"lg"} />
-            <Button size={'xs'} color={'gray'} leftIcon={<IconPlaylistAdd />}
-              onClick={() => {
-                setPartecipanti([...partecipanti, { contract_id: 0, nome: '', cognome: '', data_nascita: '', luogo_nascita: '', cf: '', indirizzo: '', cap: '' }])
-              }}>Aggiungi Partecipante</Button>
-
-            <Table>
-              <thead>
-                <tr>
-                  <th><Flex direction={'column'}>
-                    <Text>NOME</Text>
-                    <Text>COGNOME</Text>
-                  </Flex></th>
-                  <th>DATA E LUOGO DI NASCITA</th>
-                  <th>CODICE FISCALE</th>
-                  <th>INDIRIZZO</th>
-                  <th>CAP</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {partecipanti.map((item: Database['public']['Tables']['partecipanti']['Insert'], index: number) => (
-                  <tr key={index}>
-                    <td><Flex direction={'column'}>
-                      <TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'nome', event?.target.value)} value={partecipanti[index].nome} placeholder="Nome" m={'xs'} />
-                      <TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'cognome', event?.target.value)} value={partecipanti[index].cognome} placeholder="Cognome" m={'xs'} />
-                    </Flex></td> {/* partecipanti[index].nome */} {/* partecipanti[index].cognome */}
-                    <td><Flex direction={'column'}>
-                      <DatePickerInput onChange={(value) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'data_nascita', value?.toISOString() || '')} date={partecipanti[index].data_nascita ? new Date(partecipanti[index].data_nascita) : new Date()} mb={'lg'} placeholder="Data di Nascita" />
-                      <AutocompleteCities placeholder="Luogo di Nascita" label="" classes={null} form={{
-                        value: partecipanti[index].luogo_nascita, onChange: (event: any) => {
-                          console.log(event)
-                          onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'luogo_nascita', event)
-                        }
-                      }} />
-                    </Flex> </td> {/* partecipanti[index].data_nascita */} {/* partecipanti[index].luogo_nascita */}
-                    <td><TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'cf', event?.target.value)} value={partecipanti[index].cf} /> </td> {/* partecipanti[index].cf */}
-                    <td><Textarea onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'indirizzo', event?.target.value)} value={partecipanti[index].indirizzo} /> </td> {/* partecipanti[index].indirizzo */}
-                    <td><TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'cap', event?.target.value)} value={partecipanti[index].cap} /> </td> {/* partecipanti[index].cap */}
-                    <td><IconTrash onClick={() => {
-                      setPartecipanti(partecipanti.filter((item: any, i: number) => i !== index))
-                    }} /></td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colSpan={8}>
-                    <Center m={20}>
-                      <Text size={'lg'}>Totale Partecipanti: {partecipanti.length}</Text>
-                    </Center>
-                  </td>
-                </tr>
-              </tfoot>
-            </Table>
+            <Partecipanti partecipanti={partecipanti} setPartecipanti={setPartecipanti} onChangeArrayObjProp={onChangeArrayObjProp} />
           </Stepper.Step>
           <Stepper.Step label="Quote" description="Pagamenti">
-            <Divider labelPosition="center" label="Quote" mb={"lg"} mt={"lg"} />
-            <Button size={'xs'} color={'gray'} leftIcon={<IconPlaylistAdd />}
-              onClick={() => {
-                setQuote([...quote, { contract_id: 0, servizi: '', importo: 0, n_pax: 0, totale: 0 }])
-              }}>Aggiungi Quota</Button>
-            <Table>
-              <thead>
-                <tr>
-                  <th>SERVIZI</th>
-                  <th>IMPORTO</th>
-                  <th>N. PAX</th>
-                  <th>TOTALE</th>
-                </tr>
-              </thead>
-              <tbody>
-                {quote.map((item: Database['public']['Tables']['quote']['Insert'], index: number) => (
-                  <tr key={index}>
-                    <td><TextInput value={quote[index]['servizi'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'servizi', event?.target.value)} /></td> {/* item.servizio */}
-                    <td><NumberInput value={quote[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'importo', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.importo */}
-                    <td><NumberInput value={quote[index]['n_pax'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'n_pax', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.pax */}
-                    <td><TextInput value={quote[index]['totale'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'totale', event?.target.value)} /></td> {/* item.totale */}
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-            <Divider labelPosition="center" label="Pagamenti" mb={"lg"} mt={"lg"} />
-            <Button size={'xs'} color={'gray'} leftIcon={<IconPlaylistAdd />}
-              onClick={() => {
-                const data = new Date()
-                setPagamenti([...pagamenti, {
-                  contract_id: 0,
-                  data: `${data.getDate()}-${data.getMonth() + 1}-${data.getFullYear()}`,
-                  descrizione: '',
-                  importo: 0
-                }])
-              }}>Aggiungi Pagamento</Button>
-            <Table>
-              <thead>
-                <tr>
-                  <th>DATA</th>
-                  <th>DESCRIZIONE</th>
-                  <th>IMPORTO</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pagamenti.map((item: Database['public']['Tables']['pagamenti']['Insert'], index: number) => (
-                  <tr key={index}>
-                    <DatePickerInput onChange={(value) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'data', value?.toISOString() || '')} date={pagamenti[index].data ? new Date(pagamenti[index].data) : new Date()} mb={'lg'} placeholder="Data di Nascita" />
-                    <td><TextInput value={pagamenti[index]['descrizione'] || ''} onChange={(event) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'descrizione', event?.target.value)} /></td> {/* item.descrizione */}
-                    <td><NumberInput value={pagamenti[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'importo', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+            <QuotePagamenti quote={quote} setQuote={setQuote} pagamenti={pagamenti} setPagamenti={setPagamenti} onChangeArrayObjProp={onChangeArrayObjProp} />
           </Stepper.Step>
           <Stepper.Completed>
             <Text>Preview</Text>

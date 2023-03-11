@@ -27,8 +27,12 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const Cliente: React.FC<{ contraente: Database['public']['Tables']['contraente']['Row'] }> = ({ contraente }) => {
-  const supabase = useSupabaseClient<Database>()
+interface ClienteProps {
+  contraente: Database['public']['Tables']['contraente']['Row'];
+  mode: 'view' | 'edit' | 'new';
+}
+
+const Cliente: React.FC<ClienteProps> = ({ contraente, mode }) => {
   const { classes } = useStyles();
   const form = useForm({
     initialValues: {
@@ -37,7 +41,7 @@ const Cliente: React.FC<{ contraente: Database['public']['Tables']['contraente']
   })
 
   return (
-    <BaseLayout title="Creazione Cliente">
+    <BaseLayout title={`Cliente N° ${contraente.id}`}>
       <FormContraente form={form} classes={classes} />
     </BaseLayout>
   );
