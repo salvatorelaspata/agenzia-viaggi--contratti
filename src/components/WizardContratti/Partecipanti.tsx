@@ -40,7 +40,10 @@ export const Partecipanti: React.FC<PartecipantiProps> = ({ partecipanti, setPar
                 <TextInput onChange={(event) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'cognome', event?.target.value)} value={partecipanti[index].cognome} placeholder="Cognome" m={'xs'} />
               </Flex></td> {/* partecipanti[index].nome */} {/* partecipanti[index].cognome */}
               <td><Flex direction={'column'}>
-                <DatePickerInput onChange={(value) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'data_nascita', value?.toISOString() || '')} date={partecipanti[index].data_nascita ? new Date(partecipanti[index].data_nascita) : new Date()} mb={'lg'} placeholder="Data di Nascita" />
+                <DatePickerInput mb={'lg'}
+                  onChange={(value) => onChangeArrayObjProp(setPartecipanti, partecipanti, index, 'data_nascita', value?.toISOString() || '')}
+                  value={partecipanti[index].data_nascita ? new Date(partecipanti[index].data_nascita) : new Date()}
+                  placeholder="Data di Nascita" valueFormat="DD-MM-YYYY" />
                 <AutocompleteCities placeholder="Luogo di Nascita" label="" classes={null} form={{
                   value: partecipanti[index].luogo_nascita, onChange: (event: any) => {
                     console.log(event)

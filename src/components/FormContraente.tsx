@@ -1,5 +1,5 @@
 import { Flex, TextInput } from "@mantine/core"
-import { DatePickerInput } from "@mantine/dates"
+import { DatePicker } from "./DatePicker"
 
 export const FormContraente: React.FC<{ form: any, classes: any, disabled?: boolean }> = ({ form, classes, disabled = true }) => {
   return (
@@ -12,22 +12,11 @@ export const FormContraente: React.FC<{ form: any, classes: any, disabled?: bool
         <TextInput disabled={disabled} w={'100%'} label="Nome" classNames={classes} {...form.getInputProps('contraente.nome')} />
         <TextInput disabled={disabled} w={'100%'} label="Cognome" classNames={classes} {...form.getInputProps('contraente.cognome')} />
       </Flex>
-      {!disabled ? <DatePickerInput
-        mt="md"
-        popoverProps={{ withinPortal: true }}
+      {!disabled ? <DatePicker
         label="Data di Nascita"
         placeholder="Seleziona la data di nascita"
-        {...form.getInputProps('contraente.data_nascita')}
-        onChangeCapture={(event: any) => {
-          form.onChange(event)
-        }}
-        onDateChange={(date) => {
-          form.onChange({ target: { value: date } })
-        }}
-        valueFormat="DD-MM-YYYY"
-        classNames={classes}
-        clearable={false}
-      /> : <TextInput disabled={disabled} mt="md" label="Data di Nascita" classNames={classes} {...form.getInputProps('contraente.data_nascita')} />}
+        form={form.getInputProps('contraente.data_nascita')}
+        classes={classes} /> : <TextInput disabled={disabled} mt="md" label="Data di Nascita" classNames={classes} {...form.getInputProps('contraente.data_nascita')} />}
       <TextInput disabled={disabled} mt="md"
         label="Luogo di Nascita"
         classNames={classes}

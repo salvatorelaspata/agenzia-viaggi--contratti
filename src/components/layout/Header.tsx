@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   createStyles,
   Header,
@@ -126,11 +126,15 @@ export function HeaderResponsive({ links, user }: HeaderResponsiveProps) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
+  useEffect(() => {
+    setActive(router.pathname)
+  }, [router.pathname])
+
   const items = links.map((link) => (
     <a
       key={link.name}
       href={link.url}
-      className={cx(classes.link, { [classes.linkActive]: active === link.url })}
+      className={cx(classes.link, { [classes.linkActive]: active.indexOf(link.url) !== -1 })}
       onClick={(event) => {
         event.preventDefault();
         router.push(link.url)

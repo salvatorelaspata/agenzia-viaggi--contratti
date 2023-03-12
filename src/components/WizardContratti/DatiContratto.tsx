@@ -1,9 +1,10 @@
 import { Database } from "@/types/supabase"
 import { Button, Divider, Flex, List, Modal, Select, Stepper, Text, TextInput } from "@mantine/core"
-import { DatePickerInput } from "@mantine/dates"
+
 import { useDisclosure } from "@mantine/hooks"
 import { useSupabaseClient } from "@supabase/auth-helpers-react"
 import { useState } from "react"
+import { DatePicker } from "../DatePicker"
 import { FormContraente } from "../FormContraente"
 interface DatiContrattoProps {
   form: any
@@ -12,7 +13,7 @@ interface DatiContrattoProps {
 export const DatiContratto: React.FC<DatiContrattoProps> = ({ form, classes }) => {
   const supabase = useSupabaseClient<Database>()
   const [opened, { open, close }] = useDisclosure(false)
-  const [contraenti, setContraenti] = useState<Database['public']['Tables']['contraente']['Insert'][]>([]);
+  const [contraenti, setContraenti] = useState<Database['public']['Tables']['contraente']['Row'][]>([]);
 
   const onShowModal = () => {
     supabase.from('contraente').select('*').then(({ data, error }) => {
@@ -24,15 +25,11 @@ export const DatiContratto: React.FC<DatiContrattoProps> = ({ form, classes }) =
   return (
     <>
       <Divider labelPosition="center" label="Dati Contratto" mb={"lg"} mt={"lg"} />
-      <DatePickerInput
-        mt="md"
-        popoverProps={{ withinPortal: true }}
+      <DatePicker
         label="Data"
         placeholder=""
-        {...form.getInputProps('data')}
-        valueFormat="DD-MM-YYYY"
-        classNames={classes}
-        clearable={false}
+        form={form.getInputProps('data')}
+        classes={classes}
       />
       <TextInput mt="md"
         label="Operatore"
@@ -53,7 +50,7 @@ export const DatiContratto: React.FC<DatiContrattoProps> = ({ form, classes }) =
         />
         {form.getInputProps('pratica_tipo').value.startsWith('Altro') && <TextInput hidden={true} w={'100%'} label="Altro" classNames={classes} {...form.getInputProps('pratica_tipo_altro')} />}
       </Flex>
-      <TextInput mt={'md'} label="Numero Pratica" classNames={classes} {...form.getInputProps('pratica_numero')} />
+      <TextInput mt={'md'} label="Numero Pratica" classNames={classes} {...form.getInputProps('pratica_n')} />
 
       <Divider labelPosition="center" label="Dati Contraente" mb={"lg"} mt={"lg"} />
 
@@ -70,7 +67,6 @@ export const DatiContratto: React.FC<DatiContrattoProps> = ({ form, classes }) =
               close()
             }}>
               <Flex gap="md"
-
                 justify="center"
                 align="center"
                 wrap="nowrap">

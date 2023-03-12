@@ -8,7 +8,7 @@ interface QuotePagamentiProps {
   setQuote: React.Dispatch<React.SetStateAction<Database['public']['Tables']['quote']['Insert'][]>>
   pagamenti: Database['public']['Tables']['pagamenti']['Insert'][]
   setPagamenti: React.Dispatch<React.SetStateAction<Database['public']['Tables']['pagamenti']['Insert'][]>>
-  onChangeArrayObjProp: (setArray: any, array: any[], index: number, prop: string, value: string) => void
+  onChangeArrayObjProp: (setArray: any, array: any[], index: number, prop: string, value: any) => void
 }
 
 export const QuotePagamenti: React.FC<QuotePagamentiProps> = ({ quote,
@@ -36,8 +36,8 @@ export const QuotePagamenti: React.FC<QuotePagamentiProps> = ({ quote,
           {quote.map((item: Database['public']['Tables']['quote']['Insert'], index: number) => (
             <tr key={index}>
               <td><TextInput value={quote[index]['servizi'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'servizi', event?.target.value)} /></td> {/* item.servizio */}
-              <td><NumberInput value={quote[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'importo', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.importo */}
-              <td><NumberInput value={quote[index]['n_pax'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'n_pax', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td> {/* item.pax */}
+              <td><NumberInput value={quote[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'importo', event)} decimalSeparator="," precision={0} min={0} step={10} /></td> {/* item.importo */}
+              <td><NumberInput value={quote[index]['n_pax'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'n_pax', event)} decimalSeparator="," precision={0} min={0} step={10} /></td> {/* item.pax */}
               <td><TextInput value={quote[index]['totale'] || ''} onChange={(event) => onChangeArrayObjProp(setQuote, quote, index, 'totale', event?.target.value)} /></td> {/* item.totale */}
             </tr>
           ))}
@@ -65,9 +65,14 @@ export const QuotePagamenti: React.FC<QuotePagamentiProps> = ({ quote,
         <tbody>
           {pagamenti.map((item: Database['public']['Tables']['pagamenti']['Insert'], index: number) => (
             <tr key={index}>
-              <td><DatePickerInput onChange={(value) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'data', value?.toISOString() || '')} date={pagamenti[index].data ? new Date(pagamenti[index].data) : new Date()} placeholder="Data" /></td>
+              <td>
+                <DatePickerInput
+                  onChange={(value) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'data', value?.toISOString() || '')}
+                  value={pagamenti[index].data ? new Date(pagamenti[index].data) : new Date()}
+                  placeholder="Data" valueFormat="DD-MM-YYYY" />
+              </td>
               <td><TextInput value={pagamenti[index]['descrizione'] || ''} onChange={(event) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'descrizione', event?.target.value)} /></td> {/* item.descrizione */}
-              <td><NumberInput value={pagamenti[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'importo', event?.toString())} decimalSeparator="," precision={2} min={0} step={10} /></td>
+              <td><NumberInput value={pagamenti[index]['importo'] || ''} onChange={(event) => onChangeArrayObjProp(setPagamenti, pagamenti, index, 'importo', event)} decimalSeparator="," precision={0} min={0} step={10} /></td>
             </tr>
           ))}
         </tbody>

@@ -37,9 +37,13 @@ export interface Database {
           arrivo: string
           contraente_id: number
           d_carta_identita: boolean
+          d_carta_identita_numero: string | null
           d_passaporto: boolean
+          d_passaporto_numero: string | null
           d_vaccini: boolean | null
+          d_vaccini_numero: string | null
           d_visto: boolean
+          d_visto_numero: string | null
           data: string
           data_arrivo: string
           data_partenza: string
@@ -57,9 +61,13 @@ export interface Database {
           arrivo: string
           contraente_id: number
           d_carta_identita: boolean
+          d_carta_identita_numero?: string | null
           d_passaporto: boolean
+          d_passaporto_numero?: string | null
           d_vaccini?: boolean | null
+          d_vaccini_numero?: string | null
           d_visto: boolean
+          d_visto_numero?: string | null
           data: string
           data_arrivo: string
           data_partenza: string
@@ -77,9 +85,13 @@ export interface Database {
           arrivo?: string
           contraente_id?: number
           d_carta_identita?: boolean
+          d_carta_identita_numero?: string | null
           d_passaporto?: boolean
+          d_passaporto_numero?: string | null
           d_vaccini?: boolean | null
+          d_vaccini_numero?: string | null
           d_visto?: boolean
+          d_visto_numero?: string | null
           data?: string
           data_arrivo?: string
           data_partenza?: string
