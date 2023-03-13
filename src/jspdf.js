@@ -1,6 +1,5 @@
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
-import { applyPlugin } from 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 
 const data = {
   form: {
@@ -82,7 +81,7 @@ export const createPDF = data => {
     unit: 'mm',
   })
 
-  applyPlugin(jsPDF)
+  // applyPlugin(jsPDF)
 
   doc.rect(15, 15, 60, 34)
   doc.setFont('overlock')
@@ -107,7 +106,14 @@ export const createPDF = data => {
   })
   doc.text('del Codice del Turismo.', 117, 40, { align: 'center' })
 
-  doc.addImage('./assets/image.png', 'PNG', 160, 15, 30, 20)
+  doc.addImage(
+    'https://scontent-fco2-1.xx.fbcdn.net/v/t39.30808-6/316660777_523931066418667_2806132648482296837_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=3U7b69ogP_IAX9frTYL&_nc_ht=scontent-fco2-1.xx&oh=00_AfC0k0d63n1X76bZ-M32jIfAJmOMiiIn7ALmgSGJ9xBnEg&oe=6413F709',
+    'JPEG',
+    160,
+    15,
+    30,
+    20
+  )
 
   doc.line(15, 55, 195, 55)
 
@@ -171,7 +177,7 @@ export const createPDF = data => {
   doc.line(20, 156.5, 70, 156.5)
   doc.setFontSize(10)
 
-  doc.autoTable({
+  autoTable(doc, {
     head: [
       [
         'Cognome',
@@ -201,18 +207,19 @@ export const createPDF = data => {
   })
 
   doc.setFontSize(12)
-  doc.text(doc.autoTable.previous.finalY + 10, 'Quote', 20, doc)
+  console.log(doc.lastAutoTable.finalY)
+  doc.text('Quote', 20, doc.lastAutoTable.finalY + 10)
   doc.line(
     20,
-    doc.autoTable.previous.finalY + 11.5,
+    doc.lastAutoTable.finalY + 11.5,
     70,
-    doc.autoTable.previous.finalY + 11.5
+    doc.lastAutoTable.finalY + 11.5
   )
   doc.setFontSize(10)
-  doc.autoTable({
+  autoTable(doc, {
     head: [['Servizi', 'Importo', 'N° Pax', 'Totale']],
     body: data.quote.map(q => [q.servizi, q.importo, q.n_pax, q.totale]),
-    startY: doc.autoTable.previous.finalY + 13,
+    startY: doc.lastAutoTable.finalY + 13,
     theme: 'striped',
     margin: { left: 20 },
     styles: {
@@ -220,14 +227,14 @@ export const createPDF = data => {
     },
   })
 
-  const alignY = doc.autoTable.previous.finalY + 10
+  const alignY = doc.lastAutoTable.finalY + 10
 
   // table pagamenti
   doc.setFontSize(12)
   doc.text(100, alignY, 'Pagamenti')
   doc.line(100, alignY + 1.5, 150, alignY + 1.5)
   doc.setFontSize(10)
-  doc.autoTable({
+  autoTable(doc, {
     head: [['Data', 'Descrizione', 'Importo']],
     body: data.pagamenti.map(p => [p.data, p.descrizione, p.importo]),
     startY: alignY + 3,
@@ -252,20 +259,15 @@ export const createPDF = data => {
 
   // Firma del contraente e dell'operatore
   doc.setFontSize(10)
-  doc.text(autoTable.previous.finalY + 30, 'Firma del contraente', 20, doc)
-  doc.line(
-    20,
-    doc.autoTable.previous.finalY + 40,
-    70,
-    doc.autoTable.previous.finalY + 40
-  )
+  doc.text('Firma del contraente', 20, doc.lastAutoTable.finalY + 30)
+  doc.line(20, doc.lastAutoTable.finalY + 40, 70, doc.lastAutoTable.finalY + 40)
 
-  doc.text(117, doc.autoTable.previous.finalY + 30, 'Firma dell’operatore')
+  doc.text('Firma dell’operatore', 117, doc.lastAutoTable.finalY + 30)
   doc.line(
     117,
-    doc.autoTable.previous.finalY + 40,
+    doc.lastAutoTable.finalY + 40,
     167,
-    doc.autoTable.previous.finalY + 40
+    doc.lastAutoTable.finalY + 40
   )
 
   return doc

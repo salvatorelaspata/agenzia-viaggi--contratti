@@ -5,20 +5,21 @@ import { DatiContratto } from "@/components/WizardContratti/DatiContratto";
 import { DatiViaggio } from "@/components/WizardContratti/DatiViaggio";
 import { Partecipanti } from "@/components/WizardContratti/Partecipanti";
 import { QuotePagamenti } from "@/components/WizardContratti/QuotePagamenti";
-import { Button, createStyles, Group, rem, Stepper, Text } from "@mantine/core";
+import { Box, Button, createStyles, Group, rem, Stepper, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createPDF } from "@/jspdf";
+import { IconDownload, IconRowInsertTop } from "@tabler/icons-react";
 
 const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const supabase = useSupabaseClient<Database>();
   const { classes } = useStyles();
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState<number>(0);
   const nextStep = () => setActive((current) => (current < 4 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-
+  const [visibleButtons, setVisibleButtons] = useState<boolean[]>([]);
   const [submittedValues, setSubmittedValues] = useState('');
 
   const [partecipanti, setPartecipanti] = useState<Database['public']['Tables']['partecipanti']['Insert'][]>([]);
@@ -110,8 +111,18 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
     const pdf = createPDF({ form: form.values, partecipanti, quote, pagamenti })
     pdf.save(`contratto_${new Date().toISOString()}.pdf`)
   }
+
+  useLayoutEffect(() => {
+    if (active == 0) setVisibleButtons([false, true])
+    else if (active == 4) setVisibleButtons([true, false])
+    else setVisibleButtons([true, true])
+    console.log({ active, visibleButtons })
+  }, [active])
+
+
   return (
     <BaseLayout title="Nuovo Contratto">
+      {/* <Text> {active}</Text> */}
       <form onSubmit={onSaveContract} className={classes.root}>
         <Stepper active={active} onStepClick={setActive} breakpoint="sm" mt={"lg"}>
           <Stepper.Step label="Dati Contratto" description="Dati Contraente">
@@ -127,14 +138,21 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
             <QuotePagamenti quote={quote} setQuote={setQuote} pagamenti={pagamenti} setPagamenti={setPagamenti} onChangeArrayObjProp={onChangeArrayObjProp} />
           </Stepper.Step>
           <Stepper.Completed>
-            <Button variant={'light'} color={'green'} m={'lg'} p={'lg'} onClick={onExportPDF}>Export PDF</Button>
-            <Button type="submit">Salva</Button>
+            <Box p={'lg'}>
+              <Button leftIcon={<IconDownload />} m={'lg'} color={'green'} onClick={onExportPDF}>Export PDF</Button>
+              <Button leftIcon={<IconRowInsertTop />} m={'lg'} type="submit">Salva</Button>
+            </Box>
           </Stepper.Completed>
         </Stepper>
       </form>
+
       <Group position="center" m="xl" p="xl">
-        <Button variant="outline" hidden={active === 0} onClick={prevStep}>Indietro</Button>
-        <Button onClick={nextStep} hidden={active === 4}>Avanti</Button>
+        <div style={{ display: visibleButtons[0] ? '' : 'none' }}>
+          <Button variant="outline" onClick={prevStep}>Indietro</Button>
+        </div>
+        <div style={{ display: visibleButtons[1] ? '' : 'none' }}>
+          <Button onClick={nextStep}>Avanti</Button>
+        </div>
       </Group>
     </BaseLayout >
   );
