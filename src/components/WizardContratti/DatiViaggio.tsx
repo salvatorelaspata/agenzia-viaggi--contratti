@@ -70,7 +70,7 @@ export const DatiViaggio: React.FC<{ form: any, classes: any }> = ({ form, class
         <TextInput mt="md" label="Tipo Vaccini" classNames={classes} {...form.getInputProps('d_vaccini_numero')} disabled={!form.getInputProps('d_vaccini').value} />
         <TextInput mt="md" label="N° Visto" classNames={classes} {...form.getInputProps('d_visto_numero')} disabled={!form.getInputProps('d_visto').value} />
       </SimpleGrid>
-
+      <Textarea mt="md" label="Note" minRows={5} {...form.getInputProps('richieste_particolari')} />
     </>
   )
 }

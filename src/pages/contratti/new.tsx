@@ -10,6 +10,7 @@ import { useForm } from "@mantine/form";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { createPDF } from "@/jspdf";
 
 const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const supabase = useSupabaseClient<Database>();
@@ -104,6 +105,11 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
       })
   }
 
+  const onExportPDF = async () => {
+    // const { data, error } = await supabase.rpc('export_pdf', { contract_id: 1 })
+    const pdf = createPDF({ form: form.values, partecipanti, quote, pagamenti })
+    pdf.save(`contratto_${new Date().toISOString()}.pdf`)
+  }
   return (
     <BaseLayout title="Nuovo Contratto">
       <form onSubmit={onSaveContract} className={classes.root}>
@@ -121,15 +127,14 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
             <QuotePagamenti quote={quote} setQuote={setQuote} pagamenti={pagamenti} setPagamenti={setPagamenti} onChangeArrayObjProp={onChangeArrayObjProp} />
           </Stepper.Step>
           <Stepper.Completed>
-            <Text>Preview</Text>
-            <Text>Export PDF</Text>
+            <Button variant={'light'} color={'green'} m={'lg'} p={'lg'} onClick={onExportPDF}>Export PDF</Button>
             <Button type="submit">Salva</Button>
           </Stepper.Completed>
         </Stepper>
       </form>
-      <Group position="center" mt="xl">
-        <Button variant="default" onClick={prevStep}>Indietro</Button>
-        <Button onClick={nextStep}>Avanti</Button>
+      <Group position="center" m="xl" p="xl">
+        <Button variant="outline" hidden={active === 0} onClick={prevStep}>Indietro</Button>
+        <Button onClick={nextStep} hidden={active === 4}>Avanti</Button>
       </Group>
     </BaseLayout >
   );
