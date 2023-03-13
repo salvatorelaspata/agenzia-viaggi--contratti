@@ -22,7 +22,7 @@ const Home: React.FC<Props> = ({ user }) => {
         <BaseLayout title="">
             <div className='p-10'>
                 <Auth
-                    redirectTo="https://fcxibbojlouldnvybuba.supabase.co/auth/v1/callback"
+                    redirectTo="https://vgxdfwlocieswvxiudsl.supabase.co/auth/v1/callback"
                     appearance={{ theme: ThemeSupa }}
                     supabaseClient={supabaseClient}
                     providers={['google']}
