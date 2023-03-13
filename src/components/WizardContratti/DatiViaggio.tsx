@@ -2,6 +2,7 @@ import { Divider, Flex, SimpleGrid, Switch, Textarea, TextInput } from "@mantine
 import { AutocompleteCities } from "../AutocompleteCities"
 import { ImageCheckbox } from "../CheckboxWithImage"
 import { DatePicker } from "../DatePicker"
+import { DatePickerRange } from "../DatePickerRange"
 
 export const DatiViaggio: React.FC<{ form: any, classes: any }> = ({ form, classes }) => {
   return (
@@ -11,7 +12,7 @@ export const DatiViaggio: React.FC<{ form: any, classes: any }> = ({ form, class
         justify="center"
         align="center"
         wrap="nowrap">
-        <DatePicker
+        {/* <DatePicker
           label="Data Partenza"
           placeholder=""
           form={form.getInputProps('data_partenza')}
@@ -22,7 +23,8 @@ export const DatiViaggio: React.FC<{ form: any, classes: any }> = ({ form, class
           placeholder=""
           form={form.getInputProps('data_arrivo')}
           classes={classes}
-        />
+        /> */}
+        <DatePickerRange label="Data viaggio" placeholder="" form={form.getInputProps('dataViaggio')} classes={classes} />
       </Flex>
       <Flex gap="md" mt="md">
         <Switch w={'100%'} label="Pacchetto Turistico" {...form.getInputProps('pacchetto_turistico')} />

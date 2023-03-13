@@ -1,6 +1,6 @@
 import BaseLayout from "@/components/layout/BaseLayout";
 import { FormContraente } from "@/components/FormContraente";
-import { createStyles, rem } from "@mantine/core";
+import { createStyles, List, rem, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { Database } from "@/types/supabase";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -28,7 +28,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 interface ClienteProps {
-  contraente: Database['public']['Tables']['contraente']['Row'];
+  contraente: Database['public']['Tables']['contraente']['Row'] & { contratti: Database['public']['Tables']['contracts']['Row'][] };
   mode: 'view' | 'edit' | 'new';
 }
 
@@ -43,6 +43,12 @@ const Cliente: React.FC<ClienteProps> = ({ contraente, mode }) => {
   return (
     <BaseLayout title={`Cliente N° ${contraente.id}`}>
       <FormContraente form={form} classes={classes} />
+      <Title>Contratti</Title>
+      <List>
+        {contraente.contratti && contraente.contratti.map((contratto) => (
+          <List.Item key={contratto.id}>{contratto.partenza} {`-->`} {contratto.arrivo}</List.Item>
+        ))}
+      </List>
     </BaseLayout>
   );
 };
@@ -51,7 +57,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { id } = ctx.query
   const supabase = createServerSupabaseClient<Database>(ctx)
   const { data } = await supabase.from('contraente').select().eq('id', id).single()
-  console.log(data)
+  const { data: contratti } = await supabase.from('contracts').select().eq('contraente_id', id)
+  console.log(contratti)
+  const _data = structuredClone({...data, contratti})
+
   if (!data) {
     return {
       notFound: true
@@ -59,7 +68,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
   return {
     props: {
-      contraente: data
+      contraente: _data
     }
   }
 }

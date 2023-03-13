@@ -25,7 +25,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const [partecipanti, setPartecipanti] = useState<Database['public']['Tables']['partecipanti']['Insert'][]>([]);
   const [quote, setQuote] = useState<Database['public']['Tables']['quote']['Insert'][]>([]);
   const [pagamenti, setPagamenti] = useState<Database['public']['Tables']['pagamenti']['Insert'][]>([]);
-  type formProps = Database['public']['Tables']['contracts']['Insert'] & { contraente?: Database['public']['Tables']['contraente']['Row'] };
+  type formProps = Database['public']['Tables']['contracts']['Insert'] & { contraente?: Database['public']['Tables']['contraente']['Row'] } & { dataViaggio: [Date | null, Date | null] };
   const form = useForm<formProps>({
     initialValues: {
       data: '', //new Date().toISOString(),
@@ -58,7 +58,8 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
       d_passaporto_numero: '',
       d_vaccini_numero: '',
       d_visto_numero: '',
-      descrizione_viaggio: ''
+      descrizione_viaggio: '',
+      dataViaggio: [null, null]
     },
   });
 
