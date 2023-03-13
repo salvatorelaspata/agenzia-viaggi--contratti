@@ -9,14 +9,41 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      cities: {
+        Row: {
+          country: string
+          geonameid: number
+          id: number
+          name: string
+          subcountry: string | null
+        }
+        Insert: {
+          country: string
+          geonameid: number
+          id?: number
+          name: string
+          subcountry?: string | null
+        }
+        Update: {
+          country?: string
+          geonameid?: number
+          id?: number
+          name?: string
+          subcountry?: string | null
+        }
+      }
       contracts: {
         Row: {
           arrivo: string
           contraente_id: number
-          d_carta_identita: string
-          d_passaporto: string
-          d_vaccini: number
-          d_visto: string
+          d_carta_identita: boolean
+          d_carta_identita_numero: string | null
+          d_passaporto: boolean
+          d_passaporto_numero: string | null
+          d_vaccini: boolean | null
+          d_vaccini_numero: string | null
+          d_visto: boolean
+          d_visto_numero: string | null
           data: string
           data_arrivo: string
           data_partenza: string
@@ -33,15 +60,19 @@ export interface Database {
         Insert: {
           arrivo: string
           contraente_id: number
-          d_carta_identita: string
-          d_passaporto: string
-          d_vaccini: number
-          d_visto: string
+          d_carta_identita: boolean
+          d_carta_identita_numero?: string | null
+          d_passaporto: boolean
+          d_passaporto_numero?: string | null
+          d_vaccini?: boolean | null
+          d_vaccini_numero?: string | null
+          d_visto: boolean
+          d_visto_numero?: string | null
           data: string
           data_arrivo: string
           data_partenza: string
           descrizione_viaggio: string
-          id: number
+          id?: number
           operatore: string
           pacchetto_turistico: boolean
           partenza: string
@@ -53,10 +84,14 @@ export interface Database {
         Update: {
           arrivo?: string
           contraente_id?: number
-          d_carta_identita?: string
-          d_passaporto?: string
-          d_vaccini?: number
-          d_visto?: string
+          d_carta_identita?: boolean
+          d_carta_identita_numero?: string | null
+          d_passaporto?: boolean
+          d_passaporto_numero?: string | null
+          d_vaccini?: boolean | null
+          d_vaccini_numero?: string | null
+          d_visto?: boolean
+          d_visto_numero?: string | null
           data?: string
           data_arrivo?: string
           data_partenza?: string
@@ -73,32 +108,32 @@ export interface Database {
       }
       contraente: {
         Row: {
-          cap: number
+          cap: string
           cf: string
           cognome: string
           data_nascita: string
           id: number
-          indirizzo: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Insert: {
-          cap: number
+          cap: string
           cf: string
           cognome: string
           data_nascita: string
-          id: number
-          indirizzo: number
+          id?: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Update: {
-          cap?: number
+          cap?: string
           cf?: string
           cognome?: string
           data_nascita?: string
           id?: number
-          indirizzo?: number
+          indirizzo?: string
           luogo_nascita?: string
           nome?: string
         }
@@ -115,7 +150,7 @@ export interface Database {
           contract_id: number
           data: string
           descrizione: string
-          id: number
+          id?: number
           importo: number
         }
         Update: {
@@ -128,29 +163,35 @@ export interface Database {
       }
       partecipanti: {
         Row: {
-          cf: number
+          cap: string
+          cf: string
           cognome: string
           contract_id: number
           data_nascita: string
           id: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Insert: {
-          cf: number
+          cap: string
+          cf: string
           cognome: string
           contract_id: number
           data_nascita: string
-          id: number
+          id?: number
+          indirizzo: string
           luogo_nascita: string
           nome: string
         }
         Update: {
-          cf?: number
+          cap?: string
+          cf?: string
           cognome?: string
           contract_id?: number
           data_nascita?: string
           id?: number
+          indirizzo?: string
           luogo_nascita?: string
           nome?: string
         }
@@ -166,7 +207,7 @@ export interface Database {
         }
         Insert: {
           contract_id: number
-          id: number
+          id?: number
           importo: number
           n_pax: number
           servizi: string

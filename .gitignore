@@ -38,3 +38,9 @@ next-env.d.ts
 # cypress
 /cypress/videos
 /cypress/screenshots
+
+
+export.pdf
+jspdf.sample.js
+drawSQL-pgsql-export-2023-03-07.sql
+drawSQL-agenzia-viaggi-contratti-export-2023-03-08.png

@@ -1,67 +1,231 @@
-import { useSupabaseClient, useUser } from '@supabase/auth-helpers-react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
-import { Constants } from '../../constants'
-const { publicRoutes, privateRoutes } = Constants
-export const Header = () => {
-    const supabaseClient = useSupabaseClient()
-    const router = useRouter()
-    const user = useUser()
-    const [_itemsHeader, setItemsHeader] = React.useState(publicRoutes)
-    const [username, setUsername] = React.useState('')
-    const [selected, setSelected] = React.useState('/')
+import { useEffect, useState } from 'react';
+import {
+  createStyles,
+  Header,
+  Container,
+  Group,
+  Burger,
+  Paper,
+  Transition,
+  rem,
+  Menu,
+  UnstyledButton,
+  Avatar,
+  Text,
+  ActionIcon,
+  useMantineColorScheme,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconChevronDown, IconHeart, IconLogout, IconMessage, IconMoonStars, IconPlayerPause, IconSettings, IconStar, IconSun, IconSwitchHorizontal, IconTrash } from '@tabler/icons-react';
+import { User } from '@supabase/supabase-js';
+import { useRouter } from 'next/router';
 
-    useEffect(() => {
-        (async () => {
-            if (user) {
-                setItemsHeader([...privateRoutes, ...publicRoutes])
-                setUsername('Benvenuto ' + user.user_metadata.name)
-            }
-        })();
-    }, [user])
+const HEADER_HEIGHT = rem(60);
 
-    useEffect(() => {
-        setSelected(router.pathname)
-    }, [router.pathname])
+const useStyles = createStyles((theme) => ({
+  root: {
+    position: 'relative',
+    zIndex: 1,
+  },
 
-    return (
-        <header className="p-1 dark:bg-gray-800 dark:text-gray-100">
-            <div className="container flex justify-between h-10 mx-auto">
-                <Link rel="noopener noreferrer" href="#" aria-label="Back to homepage" className="flex items-center p-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 32 32" className="w-8 h-8 dark:text-violet-400">
-                        <path d="M27.912 7.289l-10.324-5.961c-0.455-0.268-1.002-0.425-1.588-0.425s-1.133 0.158-1.604 0.433l0.015-0.008-10.324 5.961c-0.955 0.561-1.586 1.582-1.588 2.75v11.922c0.002 1.168 0.635 2.189 1.574 2.742l0.016 0.008 10.322 5.961c0.455 0.267 1.004 0.425 1.59 0.425 0.584 0 1.131-0.158 1.602-0.433l-0.014 0.008 10.322-5.961c0.955-0.561 1.586-1.582 1.588-2.75v-11.922c-0.002-1.168-0.633-2.189-1.573-2.742zM27.383 21.961c0 0.389-0.211 0.73-0.526 0.914l-0.004 0.002-10.324 5.961c-0.152 0.088-0.334 0.142-0.53 0.142s-0.377-0.053-0.535-0.145l0.005 0.002-10.324-5.961c-0.319-0.186-0.529-0.527-0.529-0.916v-11.922c0-0.389 0.211-0.73 0.526-0.914l0.004-0.002 10.324-5.961c0.152-0.090 0.334-0.143 0.53-0.143s0.377 0.053 0.535 0.144l-0.006-0.002 10.324 5.961c0.319 0.185 0.529 0.527 0.529 0.916z"></path>
-                        <path d="M22.094 19.451h-0.758c-0.188 0-0.363 0.049-0.515 0.135l0.006-0.004-4.574 2.512-5.282-3.049v-6.082l5.282-3.051 4.576 2.504c0.146 0.082 0.323 0.131 0.508 0.131h0.758c0.293 0 0.529-0.239 0.529-0.531v-0.716c0-0.2-0.11-0.373-0.271-0.463l-0.004-0.002-5.078-2.777c-0.293-0.164-0.645-0.26-1.015-0.26-0.39 0-0.756 0.106-1.070 0.289l0.010-0.006-5.281 3.049c-0.636 0.375-1.056 1.055-1.059 1.834v6.082c0 0.779 0.422 1.461 1.049 1.828l0.009 0.006 5.281 3.049c0.305 0.178 0.67 0.284 1.061 0.284 0.373 0 0.723-0.098 1.027-0.265l-0.012 0.006 5.080-2.787c0.166-0.091 0.276-0.265 0.276-0.465v-0.716c0-0.293-0.238-0.529-0.529-0.529z"></path>
-                    </svg>
-                </Link>
-                <ul className="items-stretch space-x-3 flex">
-                    {_itemsHeader.map((item) => (
-                        <li key={item.name} className="flex">
-                            <Link rel="noopener noreferrer" href={item.url}
-                                className={`flex items-center px-4 -mb-1 border-b-2 dark:border-transparent 
-              ${selected === item.url && 'dark:text-violet-400 dark:border-violet-400'}`}>
-                                {item.name || ''}
-                            </Link>
-                        </li>
-                    ))}
-                    {user && <li className="flex">
-                        <button onClick={() => {
-                            supabaseClient.auth.signOut()
-                            router.push('/')
-                        }}>Sign out</button>
-                    </li>}
-                </ul>
-            </div>
-            <div>
+  dropdown: {
+    position: 'absolute',
+    top: HEADER_HEIGHT,
+    left: 0,
+    right: 0,
+    zIndex: 0,
+    borderTopRightRadius: 0,
+    borderTopLeftRadius: 0,
+    borderTopWidth: 0,
+    overflow: 'hidden',
 
-                <React.Suspense fallback={<p>Loading...</p>}>
-                    <div className="flex justify-end">
-                        <a
-                            className={`flex items-center px-4 -mb-1 border-b-2 dark:border-transparent 
-              dark:text-violet-400`}>{username}</a>
-                    </div>
-                </React.Suspense>
-            </div>
-        </header>
-    )
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: '100%',
+  },
+
+  links: {
+    [theme.fn.smallerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+
+  user: {
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+    padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
+    borderRadius: theme.radius.sm,
+    transition: 'background-color 100ms ease',
+
+    '&:hover': {
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+    },
+
+    [theme.fn.smallerThan('xs')]: {
+      display: 'none',
+    },
+  },
+
+  userActive: {
+    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white,
+  },
+
+  burger: {
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  link: {
+    display: 'block',
+    lineHeight: 1,
+    padding: `${rem(8)} ${rem(12)}`,
+    borderRadius: theme.radius.sm,
+    textDecoration: 'none',
+    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.colors.gray[7],
+    fontSize: theme.fontSizes.sm,
+    fontWeight: 500,
+
+    '&:hover': {
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+    },
+
+    [theme.fn.smallerThan('sm')]: {
+      borderRadius: 0,
+      padding: theme.spacing.md,
+    },
+  },
+
+  linkActive: {
+    '&, &:hover': {
+      backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
+      color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+    },
+  },
+}));
+
+interface HeaderResponsiveProps {
+  links: { url: string; name: string }[];
+  user: User
+}
+
+export function HeaderResponsive({ links, user }: HeaderResponsiveProps) {
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const [active, setActive] = useState(links[0].url);
+  const [userMenuOpened, setUserMenuOpened] = useState(false);
+  const { classes, cx, theme } = useStyles();
+  const router = useRouter();
+
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+
+  useEffect(() => {
+    setActive(router.pathname)
+  }, [router.pathname])
+
+  const items = links.map((link) => (
+    <a
+      key={link.name}
+      href={link.url}
+      className={cx(classes.link, { [classes.linkActive]: active.indexOf(link.url) !== -1 })}
+      onClick={(event) => {
+        event.preventDefault();
+        router.push(link.url)
+        setActive(link.url);
+        close();
+      }}
+    >
+      {link.name}
+    </a>
+  ));
+
+  return (
+    <Header height={HEADER_HEIGHT} mb={10} className={classes.root}>
+      <Container fluid maw={'1024px'} className={classes.header}>
+        Logo
+        <Group spacing={5} className={classes.links}>
+          {items}
+        </Group>
+        <Group spacing={5}>
+          <Menu
+            width={260}
+            position="bottom-end"
+            transitionProps={{ transition: 'pop-top-right' }}
+            onClose={() => setUserMenuOpened(false)}
+            onOpen={() => setUserMenuOpened(true)}
+            withinPortal
+          >
+            <Menu.Target>
+              <UnstyledButton
+                className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
+              >
+                <Group spacing={7}>
+                  <Avatar src={user.user_metadata?.avatar_url} alt={user.user_metadata?.name} radius="xl" size={20} />
+                  <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
+                    {user.user_metadata?.full_name}
+                  </Text>
+                  <IconChevronDown size={rem(12)} stroke={1.5} />
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item
+                icon={<IconHeart size="0.9rem" color={theme.colors.red[6]} stroke={1.5} />}
+              >
+                Contratti in corso
+              </Menu.Item>
+              <Menu.Item
+                icon={<IconStar size="0.9rem" color={theme.colors.yellow[6]} stroke={1.5} />}
+              >
+                Contratti terminati
+              </Menu.Item>
+              <Menu.Item
+                icon={<IconMessage size="0.9rem" color={theme.colors.blue[6]} stroke={1.5} />}
+              >
+                Contratti in scadenza
+              </Menu.Item>
+
+              <Menu.Divider />
+
+              <Menu.Label>Settings</Menu.Label>
+              {/* <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
+              Account settings
+            </Menu.Item>
+            <Menu.Item icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}>
+              Change account
+            </Menu.Item> */}
+              <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>Logout</Menu.Item>
+
+            </Menu.Dropdown>
+          </Menu>
+          <ActionIcon
+            variant="outline"
+            color={dark ? 'yellow' : 'blue'}
+            onClick={() => toggleColorScheme()}
+            title="Toggle color scheme"
+          >
+            {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
+          </ActionIcon>
+        </Group>
+
+
+        <Burger opened={opened} onClick={toggle} className={classes.burger} size="sm" />
+
+        <Transition transition="pop-top-right" duration={200} mounted={opened}>
+          {(styles) => (
+            <Paper className={classes.dropdown} withBorder style={styles}>
+              {items}
+            </Paper>
+          )}
+        </Transition>
+      </Container>
+    </Header>
+  );
 }
