@@ -42,7 +42,7 @@ export const AutocompleteCities: React.FC<{ label: string, placeholder?: string,
       itemComponent={AutoCompleteItem}
       data={cities.map((c) => ({ ...c, value: c.name }))}
       filter={() => true}
-      onChangeCapture={(event: EventHandler<FormEvent<HTMLInputElement>>) => {
+      onChangeCapture={(event: any) => {
         const value = event.target.value || ''
         form.onChange(event)
         supabase.from('cities').select().ilike('name', `${value.toString()}%`).limit(LIMIT)
