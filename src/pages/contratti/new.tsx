@@ -8,7 +8,7 @@ import { QuotePagamenti } from "@/components/WizardContratti/QuotePagamenti";
 import { Box, Button, createStyles, Group, rem, Stepper, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createPDF } from "@/jspdf";
 import { IconDownload, IconRowInsertTop } from "@tabler/icons-react";
@@ -19,7 +19,6 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const [active, setActive] = useState<number>(0);
   const nextStep = () => setActive((current) => (current < 4 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-  const [visibleButtons, setVisibleButtons] = useState<boolean[]>([]);
   const [submittedValues, setSubmittedValues] = useState('');
 
   const [partecipanti, setPartecipanti] = useState<Database['public']['Tables']['partecipanti']['Insert'][]>([]);
@@ -43,8 +42,8 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
         luogo_nascita: '',
         nome: '',
       },
-      data_partenza: '', //new Date().toISOString(),
-      data_arrivo: '', //new Date().toISOString(),
+      data_partenza: '',//new Date().toISOString(),
+      data_arrivo: '',// new Date().toISOString(),
       pacchetto_turistico: false,
       servizio_turistico: false,
       partenza: '',
@@ -113,13 +112,6 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
     pdf.save(`contratto_${new Date().toISOString()}.pdf`)
   }
 
-  useLayoutEffect(() => {
-    if (active == 0) setVisibleButtons([false, true])
-    else if (active == 4) setVisibleButtons([true, false])
-    else setVisibleButtons([true, true])
-    console.log({ active, visibleButtons })
-  }, [active])
-
 
   return (
     <BaseLayout title="Nuovo Contratto">
@@ -148,10 +140,10 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
       </form>
 
       <Group position="center" m="xl" p="xl">
-        <div style={{ display: visibleButtons[0] ? '' : 'none' }}>
+        <div style={{ display: active !== 0 ? 'visible' : 'none' }}>
           <Button variant="outline" onClick={prevStep}>Indietro</Button>
         </div>
-        <div style={{ display: visibleButtons[1] ? '' : 'none' }}>
+        <div style={{ display: active !== 4 ? 'visible' : 'none' }}>
           <Button onClick={nextStep}>Avanti</Button>
         </div>
       </Group>

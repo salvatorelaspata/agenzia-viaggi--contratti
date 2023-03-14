@@ -49,7 +49,7 @@ export const QuotePagamenti: React.FC<QuotePagamentiProps> = ({ quote,
           const data = new Date()
           setPagamenti([...pagamenti, {
             contract_id: 0,
-            data: `${data.getDate()}-${data.getMonth() + 1}-${data.getFullYear()}`,
+            data: new Date().toISOString(),
             descrizione: '',
             importo: 0
           }])
