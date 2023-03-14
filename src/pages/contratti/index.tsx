@@ -13,7 +13,7 @@ interface ContractsProps {
 const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
     const router = useRouter()
     const column: { prop: 'data' | 'operatore' | 'data_partenza' | 'data_arrivo' | 'partenza' | 'arrivo' | 'contraente.nome' | 'contraente.cognome', label: string }[] =
-        [{ prop: 'data', label: 'Data' }, { prop: 'operatore', label: 'Operatore' }, { prop: 'data_partenza', label: 'Data Partenza' }, { prop: 'data_arrivo', label: 'Ritorno' }, { prop: 'partenza', label: 'Partenza Da' }, { prop: 'arrivo', label: 'Arruvi A' }, { prop: 'contraente.nome', label: 'Nome Contraente' }, { prop: 'contraente.cognome', label: 'Cognome Contraente' }]
+        [{ prop: 'data', label: 'data' }, { prop: 'operatore', label: 'operatore' }, { prop: 'data_partenza', label: 'data_partenza' }, { prop: 'data_arrivo', label: 'data_arrivo' }, { prop: 'partenza', label: 'partenza' }, { prop: 'arrivo', label: 'arrivo' }, { prop: 'contraente.nome', label: 'contraente.nome' }, { prop: 'contraente.cognome', label: 'contraente.cognome' }]
     return (
         <BaseLayout title={`Contratti (${count})`}>
             <Link href="/contratti/new">
@@ -33,7 +33,7 @@ const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
                             {column.map(({ prop }, i) => {
                                 if (prop === 'contraente.nome' || prop === 'contraente.cognome') {
                                     return (
-                                        <td key={`${i}_${prop}`}>{contract.arrivo}</td>
+                                        <td key={`${i}_${prop}`}>{contract['contraente'][prop.split('.')[1]]}</td>
                                     )
                                 }
                                 return (
