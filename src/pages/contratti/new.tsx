@@ -5,7 +5,7 @@ import { DatiContratto } from "@/components/WizardContratti/DatiContratto";
 import { DatiViaggio } from "@/components/WizardContratti/DatiViaggio";
 import { Partecipanti } from "@/components/WizardContratti/Partecipanti";
 import { QuotePagamenti } from "@/components/WizardContratti/QuotePagamenti";
-import { Box, Button, createStyles, Group, rem, Stepper, Text } from "@mantine/core";
+import { Box, Button, createStyles, Flex, Group, rem, Stepper, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
@@ -17,17 +17,18 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const supabase = useSupabaseClient<Database>();
   const { classes } = useStyles();
   const [active, setActive] = useState<number>(0);
+
   const nextStep = () => setActive((current) => (current < 4 ? current + 1 : current));
   const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
-  const [submittedValues, setSubmittedValues] = useState('');
 
   const [partecipanti, setPartecipanti] = useState<Database['public']['Tables']['partecipanti']['Insert'][]>([]);
   const [quote, setQuote] = useState<Database['public']['Tables']['quote']['Insert'][]>([]);
   const [pagamenti, setPagamenti] = useState<Database['public']['Tables']['pagamenti']['Insert'][]>([]);
+
   type formProps = Database['public']['Tables']['contracts']['Insert'] & { contraente?: Database['public']['Tables']['contraente']['Row'] } & { dataViaggio: [Date | null, Date | null] };
   const form = useForm<formProps>({
     initialValues: {
-      data: '', //new Date().toISOString(),
+      data: new Date().toISOString(), //new Date().toISOString(),
       operatore: user?.user_metadata?.full_name,
       pratica_tipo: '',
       contraente_id: 0,
@@ -41,6 +42,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
         indirizzo: '',
         luogo_nascita: '',
         nome: '',
+        tel: '',
       },
       data_partenza: '',//new Date().toISOString(),
       data_arrivo: '',// new Date().toISOString(),
@@ -69,23 +71,25 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
 
   const onSaveContract = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmittedValues(JSON.stringify(form.values, null, 2));
     console.log({ form: form.values, partecipanti, quote, pagamenti })
     const { contraente } = form.values
     // check is new contraente
     let contraente_id;
-    if (contraente && !contraente.id) {
-      const { data, error } = await supabase.from('contraente')
-        .insert(contraente)
-        .select('id').single()
-      contraente_id = data?.id
-      console.log({ data, error })
-    } else {
-      contraente_id = contraente?.id
-    }
+    // if (contraente && !contraente.id) {
+    //   const { data, error } = await supabase.from('contraente')
+    //     .insert(contraente)
+    //     .select('id').single()
+    //   contraente_id = data?.id
+    //   console.log({ data, error })
+    // } else {
+    contraente_id = contraente?.id
+    // }
     let _values: any = structuredClone(form.values)
+    _values.data_partenza = _values.dataViaggio[0].toISOString()
+    _values.data_arrivo = _values.dataViaggio[1].toISOString()
     delete _values.contraente
     delete _values.pratica_numero
+    delete _values.dataViaggio
     const { data, error } = await supabase.from('contracts')
       .insert({ ..._values, contraente_id: contraente_id || 0 })
       .select('id').single()
@@ -96,7 +100,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
     if (!data?.id) return console.log('no contract id')
     aPAll.push(supabase.from('partecipanti').insert(partecipanti.map(p => ({ ...p, contract_id: data?.id }))))
     aPAll.push(supabase.from('quote').insert(quote.map(q => ({ ...q, contract_id: data?.id }))))
-    aPAll.push(supabase.from('pagamenti').insert(pagamenti.map(p => ({ ...p, contract_id: data?.id }))))
+    aPAll.push(supabase.from('pagamenti').insert(pagamenti.map(pg => ({ ...pg, contract_id: data?.id }))))
     Promise.all(aPAll)
       .then((values) => {
         console.log({ values })
@@ -107,15 +111,16 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
   }
 
   const onExportPDF = async () => {
-    // const { data, error } = await supabase.rpc('export_pdf', { contract_id: 1 })
     const pdf = createPDF({ form: form.values, partecipanti, quote, pagamenti })
     pdf.save(`contratto_${new Date().toISOString()}.pdf`)
   }
 
-
   return (
     <BaseLayout title="Nuovo Contratto">
-      {/* <Text> {active}</Text> */}
+      <Flex justify={'center'} >
+        <Button w={200} ml={'md'} mr={'md'} variant="outline" className={active === 0 && classes.buttonNone || ''} onClick={prevStep}>Indietro</Button>
+        <Button w={200} ml={'md'} mr={'md'} className={active === 4 && classes.buttonNone || ''} onClick={nextStep}>Avanti</Button>
+      </Flex>
       <form onSubmit={onSaveContract} className={classes.root}>
         <Stepper active={active} onStepClick={setActive} breakpoint="sm" mt={"lg"}>
           <Stepper.Step label="Dati Contratto" description="Dati Contraente">
@@ -138,15 +143,6 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
           </Stepper.Completed>
         </Stepper>
       </form>
-
-      <Group position="center" m="xl" p="xl">
-        <div style={{ display: active !== 0 ? 'visible' : 'none' }}>
-          <Button variant="outline" onClick={prevStep}>Indietro</Button>
-        </div>
-        <div style={{ display: active !== 4 ? 'visible' : 'none' }}>
-          <Button onClick={nextStep}>Avanti</Button>
-        </div>
-      </Group>
     </BaseLayout >
   );
 };
@@ -156,8 +152,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { data, error } = await supabase.auth.getUser()
   if (error) {
     return {
-      props: {
-        user: null
+      redirect: {
+        destination: '/login',
+        permanent: false,
       }
     }
   } else {
@@ -170,8 +167,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 }
 
 const useStyles = createStyles((theme) => ({
+  buttonNone: {
+    display: 'none',
+  },
   root: {
     position: 'relative',
+    paddingBottom: theme.spacing.xl,
   },
 
   input: {
@@ -188,5 +189,4 @@ const useStyles = createStyles((theme) => ({
     zIndex: 1,
   },
 }));
-
 export default NewProject;

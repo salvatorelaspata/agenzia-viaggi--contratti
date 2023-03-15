@@ -8,55 +8,23 @@ export const DatiViaggio: React.FC<{ form: any, classes: any }> = ({ form, class
   return (
     <>
       <Divider labelPosition="center" label="Dati Viaggio" mb={"md"} mt={"md"} />
-      <Flex gap="md"
-        justify="center"
-        align="center"
-        wrap="nowrap">
-        {/* <DatePicker
-          label="Data Partenza"
-          placeholder=""
-          form={form.getInputProps('data_partenza')}
-          classes={classes}
-        />
-        <DatePicker
-          label="Data Arrivo"
-          placeholder=""
-          form={form.getInputProps('data_arrivo')}
-          classes={classes}
-        /> */}
-        <DatePickerRange labelFrom="Data Inizio" labelTo="Data Fine" placeholder="" form={form.getInputProps('dataViaggio')} classes={classes} />
-        <Flex w={'100%'} direction={'column'} gap="md" mt="md">
-          <Flex gap="md" direction="column" w={'100%'}>
-            <AutocompleteCities label="Partenza Da" form={form.getInputProps('partenza')} classes={classes} />
-            <AutocompleteCities label="Arrivo A" form={form.getInputProps('arrivo')} classes={classes} />
-          </Flex>
-          <Flex>
-            <Switch w={'100%'} label="Pacchetto Turistico" {...form.getInputProps('pacchetto_turistico')} />
-            <Switch w={'100%'} label="Servizio Turistico" {...form.getInputProps('servizio_turistico')} />
-          </Flex>
-        </Flex>
-      </Flex>
 
+      <DatePickerRange labelFrom="Data Partenza" labelTo="Data Ritorno"
+        placeholder=""
+        form={form.getInputProps('dataViaggio')} classes={classes} />
 
-      <Flex gap="md" mt="md">
-        {/* <TextInput mt="md"
-                w={'100%'}
-                label="Partenza da"
-                classNames={classes}
-                {...form.getInputProps('partenza')} /> */}
-        {/* <TextInput mt="md"
-                w={'100%'}
-                label="Arrivo a"
-                classNames={classes}
-                {...form.getInputProps('arrivo')} /> */}
-      </Flex>
+      <SimpleGrid mt={'md'} cols={4} breakpoints={[{ maxWidth: 'md', cols: 2 }, { maxWidth: 'sm', cols: 1 }]}>
+        <AutocompleteCities label="Partenza Da" form={form.getInputProps('partenza')} classes={classes} />
+        <AutocompleteCities label="Arrivo A" form={form.getInputProps('arrivo')} classes={classes} />
+        <Switch w={'100%'} mt={'md'} label="Pacchetto Turistico" {...form.getInputProps('pacchetto_turistico')} />
+        <Switch w={'100%'} mt={'md'} label="Servizio Turistico" {...form.getInputProps('servizio_turistico')} />
+      </SimpleGrid>
+
       <Divider labelPosition="center" label="Documentazione Necessaria" mb={"md"} mt={"md"} />
+
       <SimpleGrid
         cols={4}
-        breakpoints={[
-          { maxWidth: 'md', cols: 2 },
-          { maxWidth: 'sm', cols: 1 },
-        ]}
+        breakpoints={[{ maxWidth: 'md', cols: 2 }, { maxWidth: 'sm', cols: 2 }]}
       >
         {[
           { key: 'd_carta_identita', description: '', title: 'Carta D\'identità' },
@@ -77,10 +45,10 @@ export const DatiViaggio: React.FC<{ form: any, classes: any }> = ({ form, class
         <TextInput mt="md" label="Tipo Vaccini" classNames={classes} {...form.getInputProps('d_vaccini_numero')} disabled={!form.getInputProps('d_vaccini').value} />
         <TextInput mt="md" label="N° Visto" classNames={classes} {...form.getInputProps('d_visto_numero')} disabled={!form.getInputProps('d_visto').value} />
       </SimpleGrid>
-      <Flex gap={'md'}>
+      <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
         <Textarea w={'100%'} mt="md" label="Descrizione del Viaggio" minRows={5} {...form.getInputProps('descrizione_viaggio')} />
         <Textarea w={'100%'} mt="md" label="Richieste Particolari" minRows={5} {...form.getInputProps('richieste_particolari')} />
-      </Flex>
+      </SimpleGrid>
     </>
   )
 }

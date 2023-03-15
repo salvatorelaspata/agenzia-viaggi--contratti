@@ -1,6 +1,6 @@
 import BaseLayout from "@/components/layout/BaseLayout";
 import { Database } from "@/types/supabase";
-import { Card, Flex, SimpleGrid, Table, Text } from "@mantine/core";
+import { Avatar, Card, Flex, SimpleGrid, Table, Text } from "@mantine/core";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { IconUser } from "@tabler/icons-react";
 import { GetServerSideProps } from "next";
@@ -45,7 +45,7 @@ const Catalogs: React.FC<{
                         component="a"
                         href={`/clienti/${id}`}>
                         <Flex align="center" justify="space-between">
-                            <IconUser width={40} />
+                            <Avatar radius="xl" size={40} />
                             <Flex w={'100%'} direction={"column"} align="flex-start" justify="center" ml="md">
                                 <Text weight={500} size="lg" >
                                     {nome}

@@ -1,0 +1,75 @@
+import { createPDF } from './src/jspdf.js'
+const data = {
+  form: {
+    data: '2023-03-08T23:00:00.000Z',
+    operatore: 'Salvatore La Spata',
+    pratica_tipo: 'Costa Crociera',
+    contraente_id: 0,
+    pratica_n: '123131312',
+    contraente: {
+      id: 0,
+      cap: '00159',
+      cf: 'adaslkj',
+      cognome: 'La Spata',
+      data_nascita: '2023-02-28T23:00:00.000Z',
+      indirizzo: 'Via S. Polo dei Cavalieri 42',
+      luogo_nascita: 'Captag9',
+      nome: 'Salvatore',
+    },
+    data_partenza: '2023-03-02T23:00:00.000Z',
+    data_arrivo: '2023-02-28T23:00:00.000Z',
+    pacchetto_turistico: true,
+    servizio_turistico: true,
+    partenza: 'Caltanissetta',
+    arrivo: 'Rome',
+    richieste_particolari: '',
+    d_visto: false,
+    d_carta_identita: true,
+    d_passaporto: false,
+    d_vaccini: false,
+    descrizione_viaggio: 'asdasdasdasdsad\nas\ndsa\nd\nasd\nasdasdsadasdasdas',
+    pratica_numero: '123',
+    d_carta_identita_numero: '123123212312312',
+  },
+  partecipanti: [
+    {
+      contract_id: 0,
+      nome: '123',
+      cognome: '123',
+      data_nascita: '2023-03-08T23:00:00.000Z',
+      luogo_nascita: 'Caxito',
+      cf: '12312312',
+      indirizzo: '3123213213',
+      cap: '213231232',
+    },
+    {
+      contract_id: 0,
+      nome: '123231',
+      cognome: '23123213213',
+      data_nascita: '2023-03-01T23:00:00.000Z',
+      luogo_nascita: '11233213',
+      cf: '3213123',
+      indirizzo: '32132321',
+      cap: '213213',
+    },
+  ],
+  quote: [
+    {
+      contract_id: 0,
+      servizi: '312222',
+      importo: 123,
+      n_pax: 2313123,
+      totale: '222131',
+    },
+  ],
+  pagamenti: [
+    {
+      contract_id: 0,
+      data: '2023-10-30T23:00:00.000Z',
+      descrizione: '1232131',
+      importo: 123,
+    },
+  ],
+}
+
+createPDF(data)

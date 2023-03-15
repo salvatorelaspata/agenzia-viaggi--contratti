@@ -1,35 +1,14 @@
 import BaseLayout from "@/components/layout/BaseLayout";
 import { FormContraente } from "@/components/FormContraente";
-import { Button, createStyles, rem } from "@mantine/core";
+import { Button, createStyles, Flex, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconCheckbox } from "@tabler/icons-react";
 import type { Database } from "@/types/supabase";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
-const useStyles = createStyles((theme) => ({
-  root: {
-    position: 'relative',
-  },
-
-  input: {
-    height: rem(54),
-    paddingTop: rem(18),
-  },
-
-  label: {
-    position: 'absolute',
-    pointerEvents: 'none',
-    fontSize: theme.fontSizes.xs,
-    paddingLeft: theme.spacing.sm,
-    paddingTop: `calc(${theme.spacing.sm} / 2)`,
-    zIndex: 1,
-  },
-}));
-
 const NewCatalog: React.FC = () => {
   const supabase = useSupabaseClient<Database>()
-  const { classes } = useStyles();
   const form = useForm({
     initialValues: {
       contraente: {
@@ -74,10 +53,11 @@ const NewCatalog: React.FC = () => {
   }
   return (
     <BaseLayout title="Creazione Cliente">
-      <FormContraente form={form} classes={classes} disabled={false} />
-
-      <Button onClick={onSubmit}>Submit</Button>
-      <Button onClick={() => form.reset()}>Reset</Button>
+      <FormContraente form={form} disabled={false} />
+      <Flex justify={'space-between'}>
+        <Button w={300} variant={'outline'} type={'reset'} onClick={() => form.reset()}>RESET</Button>
+        <Button w={300} variant={'filled'} type={'submit'} color={'green'} onClick={onSubmit}>CREA</Button>
+      </Flex>
     </BaseLayout>
   );
 };

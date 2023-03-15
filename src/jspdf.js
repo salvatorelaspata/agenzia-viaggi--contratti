@@ -1,87 +1,12 @@
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
-const data = {
-  form: {
-    data: '2023-03-08T23:00:00.000Z',
-    operatore: 'Salvatore La Spata',
-    pratica_tipo: 'Costa Crociera',
-    contraente_id: 0,
-    pratica_n: '123131312',
-    contraente: {
-      id: 0,
-      cap: '00159',
-      cf: 'adaslkj',
-      cognome: 'La Spata',
-      data_nascita: '2023-02-28T23:00:00.000Z',
-      indirizzo: 'Via S. Polo dei Cavalieri 42',
-      luogo_nascita: 'Captag9',
-      nome: 'Salvatore',
-    },
-    data_partenza: '2023-03-02T23:00:00.000Z',
-    data_arrivo: '2023-02-28T23:00:00.000Z',
-    pacchetto_turistico: true,
-    servizio_turistico: true,
-    partenza: 'Caltanissetta',
-    arrivo: 'Rome',
-    richieste_particolari: '',
-    d_visto: false,
-    d_carta_identita: true,
-    d_passaporto: false,
-    d_vaccini: false,
-    descrizione_viaggio: 'asdasdasdasdsad\nas\ndsa\nd\nasd\nasdasdsadasdasdas',
-    pratica_numero: '123',
-    d_carta_identita_numero: '123123212312312',
-  },
-  partecipanti: [
-    {
-      contract_id: 0,
-      nome: '123',
-      cognome: '123',
-      data_nascita: '2023-03-08T23:00:00.000Z',
-      luogo_nascita: 'Caxito',
-      cf: '12312312',
-      indirizzo: '3123213213',
-      cap: '213231232',
-    },
-    {
-      contract_id: 0,
-      nome: '123231',
-      cognome: '23123213213',
-      data_nascita: '2023-03-01T23:00:00.000Z',
-      luogo_nascita: '11233213',
-      cf: '3213123',
-      indirizzo: '32132321',
-      cap: '213213',
-    },
-  ],
-  quote: [
-    {
-      contract_id: 0,
-      servizi: '312222',
-      importo: 123,
-      n_pax: 2313123,
-      totale: '222131',
-    },
-  ],
-  pagamenti: [
-    {
-      contract_id: 0,
-      data: '2023-10-30T23:00:00.000Z',
-      descrizione: '1232131',
-      importo: 123,
-    },
-  ],
-}
-
 export const createPDF = data => {
   var doc = new jsPDF({
     format: 'a4',
     orientation: 'portrait',
     unit: 'mm',
   })
-
-  // applyPlugin(jsPDF)
 
   doc.rect(15, 15, 60, 34)
   doc.setFont('overlock')
@@ -122,11 +47,14 @@ export const createPDF = data => {
   doc.text('Dati Contratto', 20, 65)
   doc.line(20, 66.5, 70, 66.5)
   doc.setFontSize(10)
-  doc.text('Data: ' + data.form.data, 20, 70)
-  doc.text('Operatore: ' + data.form.operatore, 20, 75)
-  doc.text('Pratica tipo: ' + data.form.pratica_tipo, 20, 80)
-  doc.text('Contraente: ' + data.form.contraente_id, 20, 85)
-  doc.text('Pratica n: ' + data.form.pratica_n, 20, 90)
+  // doc.text('Data: ', 20, 70)
+  // doc.text(data.form.data, 40, 70)
+  doc.text('Operatore: ', 20, 70)
+  doc.text(data.form.operatore, 40, 70)
+  doc.text('Pratica tipo: ', 20, 75)
+  doc.text(data.form.pratica_tipo, 40, 75)
+  doc.text('Pratica n: ', 20, 80)
+  doc.text(data.form.pratica_n, 40, 80)
 
   // dati contraente
   doc.setFontSize(12)
@@ -207,8 +135,7 @@ export const createPDF = data => {
   })
 
   doc.setFontSize(12)
-  console.log(doc.lastAutoTable.finalY)
-  doc.text('Quote', 20, doc.lastAutoTable.finalY + 10)
+  doc.text(`Quote`, 20, doc.lastAutoTable.finalY + 10)
   doc.line(
     20,
     doc.lastAutoTable.finalY + 11.5,
@@ -218,7 +145,19 @@ export const createPDF = data => {
   doc.setFontSize(10)
   autoTable(doc, {
     head: [['Servizi', 'Importo', 'N° Pax', 'Totale']],
-    body: data.quote.map(q => [q.servizi, q.importo, q.n_pax, q.totale]),
+    body: [
+      ...data.quote.map(q => [q.servizi, q.importo, q.n_pax, q.totale]),
+      // return total
+      [
+        '-',
+        '-',
+        '-',
+        `Totale: ${data.quote.reduce(
+          (acc, q) => acc + parseInt(q.totale),
+          0
+        )} €`,
+      ],
+    ],
     startY: doc.lastAutoTable.finalY + 13,
     theme: 'striped',
     margin: { left: 20 },
@@ -259,16 +198,17 @@ export const createPDF = data => {
 
   // Firma del contraente e dell'operatore
   doc.setFontSize(10)
-  doc.text('Firma del contraente', 20, doc.lastAutoTable.finalY + 30)
-  doc.line(20, doc.lastAutoTable.finalY + 40, 70, doc.lastAutoTable.finalY + 40)
+  doc.text('Firma del contraente', 20, doc.lastAutoTable.finalY + 20)
+  doc.line(20, doc.lastAutoTable.finalY + 30, 70, doc.lastAutoTable.finalY + 30)
 
-  doc.text('Firma dell’operatore', 117, doc.lastAutoTable.finalY + 30)
+  doc.text('Firma dell’operatore', 117, doc.lastAutoTable.finalY + 20)
   doc.line(
     117,
-    doc.lastAutoTable.finalY + 40,
+    doc.lastAutoTable.finalY + 30,
     167,
-    doc.lastAutoTable.finalY + 40
+    doc.lastAutoTable.finalY + 30
   )
 
   return doc
 }
+export default createPDF

@@ -116,6 +116,7 @@ export interface Database {
           indirizzo: string
           luogo_nascita: string
           nome: string
+          tel: string | null
         }
         Insert: {
           cap: string
@@ -126,6 +127,7 @@ export interface Database {
           indirizzo: string
           luogo_nascita: string
           nome: string
+          tel?: string | null
         }
         Update: {
           cap?: string
@@ -136,6 +138,7 @@ export interface Database {
           indirizzo?: string
           luogo_nascita?: string
           nome?: string
+          tel?: string | null
         }
       }
       pagamenti: {

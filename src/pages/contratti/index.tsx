@@ -12,8 +12,8 @@ interface ContractsProps {
 }
 const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
     const router = useRouter()
-    const column: { prop: 'data' | 'operatore' | 'data_partenza' | 'data_arrivo' | 'partenza' | 'arrivo' | 'contraente.nome' | 'contraente.cognome', label: string }[] =
-        [{ prop: 'data', label: 'data' }, { prop: 'operatore', label: 'operatore' }, { prop: 'data_partenza', label: 'data_partenza' }, { prop: 'data_arrivo', label: 'data_arrivo' }, { prop: 'partenza', label: 'partenza' }, { prop: 'arrivo', label: 'arrivo' }, { prop: 'contraente.nome', label: 'contraente.nome' }, { prop: 'contraente.cognome', label: 'contraente.cognome' }]
+    const column: { prop: 'operatore' | 'data_partenza' | 'data_arrivo' | 'partenza' | 'arrivo' | 'contraente.nome' | 'contraente.cognome', label: string }[] =
+        [{ prop: 'operatore', label: 'Operatore' }, { prop: 'data_partenza', label: 'Data Partenza' }, { prop: 'data_arrivo', label: 'Data Arrivo' }, { prop: 'partenza', label: 'Da' }, { prop: 'arrivo', label: 'A' }, { prop: 'contraente.nome', label: 'Nome Contranete' }, { prop: 'contraente.cognome', label: 'Cognome Contraente' }]
     return (
         <BaseLayout title={`Contratti (${count})`}>
             <Link href="/contratti/new">
@@ -28,17 +28,12 @@ const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {contracts.map((contract) => (
+                    {contracts.map((contract: any) => (
                         <tr key={contract.id} onClick={() => router.push(`/contratti/${contract.id}`)}>
                             {column.map(({ prop }, i) => {
-                                if (prop === 'contraente.nome' || prop === 'contraente.cognome') {
-                                    return (
-                                        <td key={`${i}_${prop}`}>{contract['contraente'][prop.split('.')[1]]}</td>
-                                    )
-                                }
-                                return (
-                                    <td key={`${i}_${prop}`}>{contract[prop]}</td>
-                                )
+                                if (prop === 'contraente.nome' || prop === 'contraente.cognome')
+                                    return <td key={`${i}_${prop}`}>{contract['contraente'][prop.split('.')[1]]}</td>
+                                return <td key={`${i}_${prop}`}>{contract[prop]}</td>
                             })}
                         </tr>
                     ))}
@@ -52,7 +47,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const supabase = createServerSupabaseClient<Database>(context)
     const { data: contracts, error, count } = await supabase
         .from('contracts')
-        .select('id, data, operatore, data_partenza, partenza, arrivo, contraente(nome, cognome)', { count: 'exact' }) || { data: [], error: null, count: 0 }
+        .select('id, operatore, data_arrivo, data_partenza, partenza, arrivo, contraente(nome, cognome)', { count: 'exact' }) || { data: [], error: null, count: 0 }
     if (error) {
         return {
             props: {
