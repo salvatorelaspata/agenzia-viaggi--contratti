@@ -1,30 +1,24 @@
+import { ArticlesCardsGrid } from "@/components/Articles";
 import BaseLayout from "@/components/layout/BaseLayout"
 import { StatsRing } from "@/components/Stats";
-import { Database } from "@/types/supabase";
 import { Center, Text } from "@mantine/core";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs"
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { GetServerSideProps } from "next"
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 
-interface Props {
-    user: User
-}
 const Landing: React.FC = () => {
     return (
         <BaseLayout title="Dashboard">
-            <Center><Text size="lg">Andamento anno corrente</Text></Center>
+            <Center mt={'lg'} mb={'lg'}><Text size="lg">Possibili grafici (Es Andamento anno corrente)</Text></Center>
             <Center>
                 <StatsRing data={[{
-                    "label": "Page views",
+                    "label": "Users",
                     "stats": "456,578",
                     "progress": 65,
                     "color": "teal",
                     "icon": "up"
                 },
                 {
-                    "label": "New users",
+                    "label": "Nuovi Contratti",
                     "stats": "2,550",
                     "progress": 72,
                     "color": "blue",
@@ -38,6 +32,8 @@ const Landing: React.FC = () => {
                     "icon": "down"
                 }]} />
             </Center>
+            <Center mt={'lg'} mb={'lg'}><Text size="lg">Possibili grafici (Es Andamento anno corrente)</Text></Center>
+            <ArticlesCardsGrid />
         </BaseLayout>
     );
 };

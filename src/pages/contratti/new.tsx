@@ -5,17 +5,19 @@ import { DatiContratto } from "@/components/WizardContratti/DatiContratto";
 import { DatiViaggio } from "@/components/WizardContratti/DatiViaggio";
 import { Partecipanti } from "@/components/WizardContratti/Partecipanti";
 import { QuotePagamenti } from "@/components/WizardContratti/QuotePagamenti";
-import { Box, Button, createStyles, Flex, Group, rem, Stepper, Text } from "@mantine/core";
+import { Box, Button, Center, createStyles, Flex, Group, rem, Stepper, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { createServerSupabaseClient, User } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createPDF } from "@/jspdf";
 import { IconDownload, IconRowInsertTop } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 
 const NewProject: React.FC<{ user: User }> = ({ user }) => {
   const supabase = useSupabaseClient<Database>();
   const { classes } = useStyles();
+  const routing = useRouter();
   const [active, setActive] = useState<number>(0);
 
   const nextStep = () => setActive((current) => (current < 4 ? current + 1 : current));
@@ -104,6 +106,7 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
     Promise.all(aPAll)
       .then((values) => {
         console.log({ values })
+        routing.push('/contratti');
       })
       .catch((error) => {
         console.log({ error })
@@ -136,10 +139,12 @@ const NewProject: React.FC<{ user: User }> = ({ user }) => {
             <QuotePagamenti quote={quote} setQuote={setQuote} pagamenti={pagamenti} setPagamenti={setPagamenti} onChangeArrayObjProp={onChangeArrayObjProp} />
           </Stepper.Step>
           <Stepper.Completed>
-            <Box p={'lg'}>
-              <Button leftIcon={<IconDownload />} m={'lg'} color={'green'} onClick={onExportPDF}>Export PDF</Button>
-              <Button leftIcon={<IconRowInsertTop />} m={'lg'} type="submit">Salva</Button>
-            </Box>
+            <Center>
+              <Box p={'lg'}>
+                <Button h={200} w={200} style={{ fontSize: rem(20) }} leftIcon={<IconDownload />} m={'lg'} color={'green'} onClick={onExportPDF}>Export PDF</Button>
+                <Button h={200} w={200} style={{ fontSize: rem(20) }} leftIcon={<IconRowInsertTop />} m={'lg'} type="submit">Salva</Button>
+              </Box>
+            </Center>
           </Stepper.Completed>
         </Stepper>
       </form>
