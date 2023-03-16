@@ -1,4 +1,5 @@
 import { Database } from "@/types/supabase"
+import { onChangeArrayObjProp } from "@/utils"
 import { Button, Center, Divider, Flex, Table, Text, Textarea, TextInput } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { IconPlaylistAdd, IconTrash } from "@tabler/icons-react"
@@ -7,9 +8,8 @@ import { AutocompleteCities } from "../AutocompleteCities"
 interface PartecipantiProps {
   partecipanti: Database['public']['Tables']['partecipanti']['Insert'][]
   setPartecipanti: React.Dispatch<React.SetStateAction<Database['public']['Tables']['partecipanti']['Insert'][]>>
-  onChangeArrayObjProp: (setPartecipanti: React.Dispatch<React.SetStateAction<Database['public']['Tables']['partecipanti']['Insert'][]>>, partecipanti: Database['public']['Tables']['partecipanti']['Insert'][], index: number, key: string, value: string) => void
 }
-export const Partecipanti: React.FC<PartecipantiProps> = ({ partecipanti, setPartecipanti, onChangeArrayObjProp }) => {
+export const Partecipanti: React.FC<PartecipantiProps> = ({ partecipanti, setPartecipanti }) => {
   return (
     <>
       <Divider labelPosition="center" label="Partecipanti" mb={"lg"} mt={"lg"} />

@@ -13,7 +13,14 @@ interface ContractsProps {
 const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
     const router = useRouter()
     const column: { prop: 'operatore' | 'data_partenza' | 'data_arrivo' | 'partenza' | 'arrivo' | 'contraente.nome' | 'contraente.cognome', label: string }[] =
-        [{ prop: 'operatore', label: 'Operatore' }, { prop: 'data_partenza', label: 'Data Partenza' }, { prop: 'data_arrivo', label: 'Data Arrivo' }, { prop: 'partenza', label: 'Da' }, { prop: 'arrivo', label: 'A' }, { prop: 'contraente.nome', label: 'Nome Contranete' }, { prop: 'contraente.cognome', label: 'Cognome Contraente' }]
+        [
+            { prop: 'contraente.nome', label: 'Nome Contranete' },
+            { prop: 'contraente.cognome', label: 'Cognome Contraente' },
+            { prop: 'data_partenza', label: 'Data Partenza' },
+            { prop: 'data_arrivo', label: 'Data Arrivo' },
+            { prop: 'partenza', label: 'Da' }, { prop: 'arrivo', label: 'A' },
+            { prop: 'operatore', label: 'Operatore' },
+        ]
     return (
         <BaseLayout title={`Contratti (${count})`}>
             <Link href="/contratti/new">

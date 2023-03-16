@@ -1,4 +1,5 @@
 import { Database } from "@/types/supabase"
+import { onChangeArrayObjProp } from "@/utils"
 import { Button, Divider, NumberInput, Table, TextInput } from "@mantine/core"
 import { DatePickerInput } from "@mantine/dates"
 import { IconPlaylistAdd } from "@tabler/icons-react"
@@ -8,14 +9,12 @@ interface QuotePagamentiProps {
   setQuote: React.Dispatch<React.SetStateAction<Database['public']['Tables']['quote']['Insert'][]>>
   pagamenti: Database['public']['Tables']['pagamenti']['Insert'][]
   setPagamenti: React.Dispatch<React.SetStateAction<Database['public']['Tables']['pagamenti']['Insert'][]>>
-  onChangeArrayObjProp: (setArray: any, array: any[], index: number, prop: string, value: any) => void
 }
 
 export const QuotePagamenti: React.FC<QuotePagamentiProps> = ({ quote,
   setQuote,
   pagamenti,
-  setPagamenti,
-  onChangeArrayObjProp }) => {
+  setPagamenti }) => {
   return (
     <>
       <Divider labelPosition="center" label="Quote" mb={"lg"} mt={"lg"} />
