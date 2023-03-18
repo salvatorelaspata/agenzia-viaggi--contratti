@@ -1,4 +1,5 @@
 import { formProps } from '@/components/WizardContratti/StepperContratti'
+import createPDF from '@/jspdf'
 import { Database } from '@/types/supabase'
 import { useForm } from '@mantine/form'
 import { User } from '@supabase/supabase-js'
@@ -58,6 +59,11 @@ export const _useForm = (
     },
   })
 
+  const onExportPDF = () => {
+    const pdf = createPDF({ form: form.values, partecipanti, quote, pagamenti })
+    pdf.save(`contratto_${new Date().toISOString()}.pdf`)
+  }
+
   return {
     form,
     partecipanti,
@@ -66,5 +72,6 @@ export const _useForm = (
     setQuote,
     pagamenti,
     setPagamenti,
+    onExportPDF,
   }
 }

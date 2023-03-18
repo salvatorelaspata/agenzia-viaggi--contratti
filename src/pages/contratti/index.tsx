@@ -12,13 +12,15 @@ interface ContractsProps {
 }
 const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
     const router = useRouter()
-    const column: { prop: 'operatore' | 'data_partenza' | 'data_arrivo' | 'partenza' | 'arrivo' | 'contraente.nome' | 'contraente.cognome', label: string }[] =
+    const column: { prop: 'operatore' | 'data_partenza' | 'data_arrivo' | 'partenza' | 'arrivo' | 'contraente', label: string }[] =
         [
-            { prop: 'contraente.nome', label: 'Nome Contranete' },
-            { prop: 'contraente.cognome', label: 'Cognome Contraente' },
+            // { prop: 'contraente.nome', label: 'Nome Contranete' },
+            // { prop: 'contraente.cognome', label: 'Cognome Contraente' },
+            { prop: 'contraente', label: 'Contranete' },
             { prop: 'data_partenza', label: 'Data Partenza' },
             { prop: 'data_arrivo', label: 'Data Arrivo' },
-            { prop: 'partenza', label: 'Da' }, { prop: 'arrivo', label: 'A' },
+            { prop: 'partenza', label: 'Da' }, 
+            { prop: 'arrivo', label: 'A' },
             { prop: 'operatore', label: 'Operatore' },
         ]
     return (
@@ -38,8 +40,8 @@ const Contracts: React.FC<ContractsProps> = ({ contracts, count }) => {
                     {contracts.map((contract: any) => (
                         <tr key={contract.id} onClick={() => router.push(`/contratti/${contract.id}`)}>
                             {column.map(({ prop }, i) => {
-                                if (prop === 'contraente.nome' || prop === 'contraente.cognome')
-                                    return <td key={`${i}_${prop}`}>{contract['contraente'][prop.split('.')[1]]}</td>
+                                if (prop === 'contraente')
+                                    return (<td key={`${i}_${prop}`}>{`${contract['contraente']['nome']} ${contract['contraente']['cognome']}`}</td>)
                                 return <td key={`${i}_${prop}`}>{contract[prop]}</td>
                             })}
                         </tr>
