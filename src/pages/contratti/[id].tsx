@@ -25,7 +25,9 @@ const Contract: React.FC<{ data: any, user: User }> = ({ data, user }) => {
     delete _values.dataViaggio
     const { data, error } = await supabase.from('contracts')
       .update({ ..._values, contraente_id: contraente_id || 0 })
+      .eq('id', _values.id)
       .select('id').single()
+      console.log({ data, error })
 
     // update partecipanti, quote, pagamenti with contract_id = data.id
     if (data) {
