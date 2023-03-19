@@ -51,7 +51,7 @@ export const StepperContratti: React.FC<StepperProps> = ({ onSubmitForm, onExpor
         <Stepper.Completed>
           <Center>
             <Box p={'lg'}>
-              <Button h={200} w={200} style={{ fontSize: rem(20) }} leftIcon={<IconDownload />} m={'lg'} color={'green'} onClick={onExportPDF}>Export PDF</Button>
+              <Button h={200} w={200} style={{ fontSize: rem(20) }} leftIcon={<IconDownload />} m={'lg'} color={'green'} onClick={onExportPDF} type="button">Export PDF</Button>
               <Button h={200} w={200} style={{ fontSize: rem(20) }} leftIcon={<IconRowInsertTop />} m={'lg'} type="submit">Salva</Button>
             </Box>
           </Center>
