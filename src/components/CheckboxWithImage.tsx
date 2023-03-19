@@ -9,6 +9,7 @@ import {
 } from '@mantine/core';
 import { useUncontrolled } from '@mantine/hooks';
 import { IconUserExclamation } from '@tabler/icons-react';
+import { useEffect } from 'react';
 
 const useStyles = createStyles((theme, { checked }: { checked: boolean }) => ({
   button: {
@@ -64,6 +65,13 @@ export function ImageCheckbox({
   });
 
   const { classes, cx } = useStyles({ checked: value });
+
+  useEffect(() => {
+    console.log('checked', value)
+    if (value !== undefined) {
+      handleChange(value);
+    }
+  }, []);
 
   return (
     <UnstyledButton

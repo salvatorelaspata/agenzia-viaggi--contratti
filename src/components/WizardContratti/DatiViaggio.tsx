@@ -31,7 +31,7 @@ export const DatiViaggio: React.FC<{ form: any, classes: any }> = ({ form, class
           { key: 'd_passaporto', description: '', title: 'Passaporto' },
           { key: 'd_vaccini', description: '', title: 'Vaccini' },
           { key: 'd_visto', description: '', title: 'Visto' },
-        ].map((item) => <ImageCheckbox {...item} {...form.getInputProps(item.key)} key={item.key} />)}
+        ].map((item) => <ImageCheckbox {...item} checked={form.getInputProps(item.key).value} {...form.getInputProps(item.key)} key={item.key} />)}
       </SimpleGrid>
       <SimpleGrid
         cols={4}

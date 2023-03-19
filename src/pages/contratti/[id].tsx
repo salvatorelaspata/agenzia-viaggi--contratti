@@ -10,7 +10,7 @@ import { GetServerSideProps } from "next"
 const Contract: React.FC<{ data: any, user: User }> = ({ data, user }) => {
   const supabase = useSupabaseClient<Database>()
   const { form, partecipanti, setPartecipanti, quote, setQuote, pagamenti, setPagamenti, onExportPDF } = _useForm(data, user, data.partecipanti, data.quote, data.pagamenti)
-  
+
   const onModifyContract = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log({ form: form.values, partecipanti, quote, pagamenti })
@@ -23,11 +23,14 @@ const Contract: React.FC<{ data: any, user: User }> = ({ data, user }) => {
     delete _values.contraente
     delete _values.pratica_numero
     delete _values.dataViaggio
+    delete _values.pagamenti
+    delete _values.partecipanti
+    delete _values.quote
     const { data, error } = await supabase.from('contracts')
       .update({ ..._values, contraente_id: contraente_id || 0 })
       .eq('id', _values.id)
       .select('id').single()
-      console.log({ data, error })
+    console.log({ data, error })
 
     // update partecipanti, quote, pagamenti with contract_id = data.id
     if (data) {
@@ -50,8 +53,6 @@ const Contract: React.FC<{ data: any, user: User }> = ({ data, user }) => {
     }
   }
 
-  
-  console.log({ form, partecipanti, quote, pagamenti })
   return (
     <BaseLayout title="Contratto">
       <StepperContratti

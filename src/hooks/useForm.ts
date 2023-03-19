@@ -21,6 +21,24 @@ export const _useForm = (
   const [pagamenti, setPagamenti] =
     useState<Database['public']['Tables']['pagamenti']['Insert'][]>(_pagamenti)
 
+  if (initialValues) {
+    initialValues.dataViaggio = [
+      new Date(initialValues.data_partenza),
+      new Date(initialValues.data_arrivo),
+    ]
+    initialValues.d_carta_identita = !!initialValues.d_carta_identita_numero
+    initialValues.d_passaporto = !!initialValues.d_passaporto_numero
+    initialValues.d_vaccini = !!initialValues.d_vaccini_numero
+    initialValues.d_visto = !!initialValues.d_visto_numero
+    console.log(
+      initialValues.d_carta_identita,
+      initialValues.d_carta_identita_numero
+    )
+    console.log(initialValues.d_passaporto, initialValues.d_passaporto_numero)
+    console.log(initialValues.d_vaccini, initialValues.d_vaccini_numero)
+    console.log(initialValues.d_visto, initialValues.d_visto_numero)
+  }
+
   const form = useForm<formProps>({
     initialValues: initialValues || {
       data: new Date().toISOString(), //new Date().toISOString(),
